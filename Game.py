@@ -6,6 +6,7 @@ import SummaryResult
 
 
 def game():
+    
     # 変数
     inningNumber = 1    #イニング
     outCount = 0    #アウト
@@ -19,7 +20,7 @@ def game():
 
     # 打席実行
     while inningNumber <= 9:
-        RunAtBat.test()
+        RunAtBat.runAtBat()
         inningNumber += 1
 
     # 事後処理

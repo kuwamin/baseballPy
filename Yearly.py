@@ -6,7 +6,7 @@ import SummaryResult
 def main():
 
     # 変数
-    gameNumber = 3    #試合数
+    gameNumber = 1    #試合数
 
 
     # 事前処理

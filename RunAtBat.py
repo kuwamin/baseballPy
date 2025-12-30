@@ -4,17 +4,18 @@ import Logic
 import UpdateExam
 
 
-def runAtBat():
+def runAtBat(pitcher, batter):
     
     # 変数
 
 
     # 事前処理
-    DetermineAbility.test()
+    #DetermineAbility.test()
 
 
     # 打席結果決定
-    Logic.test()
+    #Logic.test()
 
     # 事後処理
-    UpdateExam.test()
+    #UpdateExam.test()
+    return 

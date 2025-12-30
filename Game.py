@@ -12,9 +12,16 @@ def game():
 
 
     # 事前処理
-    AquireData.test()
+    pichers, batters= AquireData.test()
 
-    DecideMember.test()
+    # --- 表示処理 ---
+    starters = DecideMember.test(batters)
+
+    print("--- 本日のスタメン ---")
+    # タプルをアンパックして受け取る
+    for i, (game_pos, player) in enumerate(starters, 1):
+        # player.position（本来の位置）ではなく、game_pos（今日の位置）を表示
+        print(f"{i}番 ({game_pos}) {player.name} {player.trajectory} {player.meet} {player.power} {player.speed} {player.arm} {player.fielding} {player.catching}")
 
 
     # 打席実行

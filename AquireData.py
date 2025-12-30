@@ -35,6 +35,7 @@ def test():
         b = Batter(data_dict)
         batters.append(b)
 
+    '''
     print("\n--- 投手リスト ---")
     print(pitchers)
     print(pitchers[0].name)
@@ -42,3 +43,6 @@ def test():
     print("\n--- 野手リスト ---")
     print(batters)
     print(batters[0].name)
+    '''
+
+    return pitchers, batters

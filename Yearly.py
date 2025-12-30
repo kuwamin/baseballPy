@@ -3,7 +3,7 @@ import Game
 import ResetResult
 import SummaryResult
 
-def yearly():
+def main():
 
     # 変数
     gameNumber = 3    #試合数
@@ -19,3 +19,7 @@ def yearly():
 
     # 事後処理
     SummaryResult.test()
+
+# 処理実行
+if __name__ == "__main__":
+    main()

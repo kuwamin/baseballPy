@@ -2,12 +2,12 @@ from openpyxl import load_workbook
 from Player import Batter, Pitcher
 
 # テストコード
-def test():
+def test(team_name):
     file_path = 'test.xlsx'
     wb = load_workbook(file_path, data_only=True)
     
     # シート名の定義
-    sheet = [wb['test_p'], wb['test_b']]
+    sheet = [wb[team_name+'_p'], wb[team_name+'_b']]
 
     # 投手・野手のヘッダ情報を取得
     headers_p = [cell.value for cell in sheet[0][1]]

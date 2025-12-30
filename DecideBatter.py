@@ -1,7 +1,7 @@
 # テストコード
 def test(batters):
     positions = ['捕', '一', '二', '三', '遊', '左', '中', '右', '指']
-    lineup = [] # (ポジション名, 選手オブジェクト) のタプルを入れるリスト
+    starter_batter = [] # (ポジション名, 選手オブジェクト) のタプルを入れるリスト
     
     candidates = batters[:]
 
@@ -14,12 +14,12 @@ def test(batters):
                 break
         
         if selected_player:
-            lineup.append((pos, selected_player))
+            starter_batter.append((pos, selected_player))
             candidates.remove(selected_player)
         else:
             if candidates:
                 selected_player = candidates.pop(0)
-                lineup.append((pos, selected_player))
+                starter_batter.append((pos, selected_player))
                 print(f"注意: {pos} の適任者がいないため {selected_player.name} を配置しました")
 
-    return lineup 
+    return starter_batter 

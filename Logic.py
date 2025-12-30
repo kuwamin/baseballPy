@@ -109,6 +109,7 @@ def logic(pitcher, batter, game_condition, is_risp=False):
 
     # --- 5. 成績(stats)の更新 ---
     UpdateStats.update_stats(pitcher, batter, result, is_risp)
+    print(f"{batter.name}：{result}") 
 
     return game_condition
 

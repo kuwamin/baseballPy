@@ -1,10 +1,9 @@
 # ライブラリインポート
 import DetermineAbility
 import Logic
-import UpdateExam
 
 
-def runAtBat(pitcher, batter):
+def runAtBat(pitcher, batter, game_condition):
     
     # 変数
 
@@ -14,8 +13,7 @@ def runAtBat(pitcher, batter):
 
 
     # 打席結果決定
-    #Logic.test()
+    game_condition = Logic.logic(pitcher, batter, game_condition)
 
     # 事後処理
-    #UpdateExam.test()
-    return 
+    return game_condition

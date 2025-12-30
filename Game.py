@@ -11,9 +11,9 @@ def game():
     # 変数
     inningNumber = 1    #イニング
     TopBottom = 0   #表裏
-    outCount = 0    #アウトカウント
     batterNumber_1 = 1
     batterNumber_2 = 1
+    game_condition = [0,0,0,0,0]    # 一塁、二塁、三塁、アウトカウント、得点
 
 
     # 事前処理
@@ -36,32 +36,30 @@ def game():
         
         if TopBottom == 0:
             while True:
-                pitcher = starters_pitcher_1
-                batter = starters_batter_2[batterNumber_2 % 9 - 1]
-                print(batter[1].name) 
+                pitcher = starters_pitcher_1[1]
+                batter = starters_batter_2[batterNumber_2 % 9 - 1][1]
+                print(batter.name) 
                 
-                RunAtBat.runAtBat(pitcher, batter)
+                game_condition = RunAtBat.runAtBat(pitcher, batter, game_condition)
                 
                 batterNumber_2 += 1
-                outCount += 1
-                if outCount == 3:
+                if game_condition[3] == 3:
                     TopBottom = 1  
-                    outCount = 0   
+                    game_condition[3] = 0   
                     break
         else:
             while True:
                 
-                pitcher = starters_pitcher_2
-                batter = starters_batter_1[batterNumber_1 % 9 - 1]
-                print(batter[1].name)
+                pitcher = starters_pitcher_2[1]
+                batter = starters_batter_1[batterNumber_1 % 9 - 1][1]
+                print(batter.name)
                 
-                RunAtBat.runAtBat(pitcher, batter)
+                game_condition = RunAtBat.runAtBat(pitcher, batter, game_condition)
                 
                 batterNumber_1 += 1
-                outCount += 1
-                if outCount == 3:
+                if game_condition[3] == 3:
                     TopBottom = 0
-                    outCount = 0
+                    game_condition[3] = 0
                     inningNumber += 1
                     break     
         

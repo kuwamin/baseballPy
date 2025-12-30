@@ -73,7 +73,7 @@ class Batter(Player):
         self.clutch_b = data_dict.get('チャンス')
         self.vs_left_b = data_dict.get('対左投手')
         self.injury_res = data_dict.get('ケガしにくさ')
-        self.stealing_res = data_dict.get('盗塁')  # 能力としての盗塁（技術）
+        self.stealing_res = data_dict.get('盗塁')  
         self.base_running = data_dict.get('走塁')
         self.throwing_res = data_dict.get('送球')
         self.recovery = data_dict.get('回復')
@@ -95,7 +95,7 @@ class Batter(Player):
             'so': data_dict.get('三振', 0),
             'sac_bunt': data_dict.get('犠打', 0),
             'sac_fly': data_dict.get('犠飛', 0),
-            'stolen_bases': data_dict.get('盗塁成功', 0), # 成績としての盗塁
+            'stolen_bases': data_dict.get('盗塁成功', 0),
             'caught_stealing': data_dict.get('盗塁死', 0),
             'gdp': data_dict.get('併殺打', 0),
             'risp_pa': data_dict.get('得点圏打席', 0),

@@ -1,9 +1,8 @@
 # ライブラリインポート
 import AquireData
 import DecideMember
+import OutputExam
 import RunAtBat
-import SummaryResult
-
 
 def game():
     
@@ -24,4 +23,4 @@ def game():
         inningNumber += 1
 
     # 事後処理
-    SummaryResult.test()
+    OutputExam.test()

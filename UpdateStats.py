@@ -1,10 +1,10 @@
-def update_stats(pitcher, batter, result, is_risp):
+def update_stats(pitcher, batter, result, risp):
     """判定結果に基づいてstats辞書を更新する"""
     # 共通加算項目
     batter.stats['pa'] += 1
     pitcher.stats['batters_faced'] += 1
     
-    if is_risp:
+    if risp:
         batter.stats['risp_pa'] += 1
         pitcher.stats['risp_batters'] += 1
 
@@ -13,7 +13,7 @@ def update_stats(pitcher, batter, result, is_risp):
         batter.stats['hits'] += 1
         batter.stats['singles'] += 1
         pitcher.stats['hits_allowed'] += 1
-        if is_risp:
+        if risp:
             batter.stats['risp_hits'] += 1
             pitcher.stats['risp_hits'] += 1
             
@@ -21,7 +21,7 @@ def update_stats(pitcher, batter, result, is_risp):
         batter.stats['hits'] += 1
         batter.stats['doubles'] += 1
         pitcher.stats['hits_allowed'] += 1
-        if is_risp:
+        if risp:
             batter.stats['risp_hits'] += 1
             pitcher.stats['risp_hits'] += 1
 
@@ -29,7 +29,7 @@ def update_stats(pitcher, batter, result, is_risp):
         batter.stats['hits'] += 1
         batter.stats['triples'] += 1
         pitcher.stats['hits_allowed'] += 1
-        if is_risp:
+        if risp:
             batter.stats['risp_hits'] += 1
             pitcher.stats['risp_hits'] += 1
 
@@ -38,7 +38,7 @@ def update_stats(pitcher, batter, result, is_risp):
         batter.stats['hr'] += 1
         pitcher.stats['hits_allowed'] += 1
         pitcher.stats['hr_allowed'] += 1
-        if is_risp:
+        if risp:
             batter.stats['risp_hits'] += 1
             pitcher.stats['risp_hits'] += 1
 

@@ -2,7 +2,7 @@ import random
 
 import UpdateStats
 
-def logic(pitcher, batter, game_condition, is_risp=False):
+def logic(pitcher, batter, game_condition, is_risp):
     """
     打席の結果を判定し、選手の成績を更新する
     pitcher: 投手インスタンス
@@ -97,8 +97,6 @@ def logic(pitcher, batter, game_condition, is_risp=False):
     elif result in ["OUT", "SO"]:
         outs += 1
         # アウトカウントが3になったらランナーリセット（イニング終了）
-        if outs >= 3:
-            b1, b2, b3 = 0, 0, 0
 
     # game_conditionリストを更新
     game_condition[0], game_condition[1], game_condition[2] = b1, b2, b3

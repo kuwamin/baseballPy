@@ -6,7 +6,7 @@ def test(file_path, all_players):
         '試合数': 'games', '打席': 'pa', '打数': 'ab', '安打': 'hits',
         '単打': 'singles', '二塁打': 'doubles', '三塁打': 'triples',
         '本塁打': 'hr', '打点': 'rbi', '四球': 'walks', '死球': 'hbp',
-        '三振': 'so', '得点圏打席': 'risp_pa', '得点圏安打': 'risp_hits'
+        '三振': 'so', '得点圏打数': 'risp_pa', '得点圏安打': 'risp_hits'
     }
 
     print("\n--- デバッグ開始 ---")

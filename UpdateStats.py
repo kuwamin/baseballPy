@@ -10,8 +10,8 @@ def update_stats(pitcher, batter, result, risp, rbi):
         batter.stats['rbi'] = 0
     batter.stats['rbi'] += rbi
     
-    # 得点圏打席
-    if risp:
+    # 得点圏打数
+    if risp and not((result == "BB" and result == "HBP")):
         batter.stats['risp_pa'] += 1
 
     # 安打・四死球・三振の判定

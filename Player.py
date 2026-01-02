@@ -98,7 +98,7 @@ class Batter(Player):
             'stolen_bases': data_dict.get('盗塁成功', 0),
             'caught_stealing': data_dict.get('盗塁死', 0),
             'gdp': data_dict.get('併殺打', 0),
-            'risp_pa': data_dict.get('得点圏打席', 0),
+            'risp_pa': data_dict.get('得点圏打数', 0),
             'risp_hits': data_dict.get('得点圏安打', 0)
         }
 

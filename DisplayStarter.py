@@ -1,14 +1,11 @@
-def desplay_starter(starters_batter_1,starters_pitcher_1,  starters_batter_2,starters_pitcher_2):
+def desplay_starter(starters_batter, starters_pitcher, season_stats_list):
 
     print("--- 本日のスタメン ---")
-    # タプルをアンパックして受け取る
-    for i, (game_pos, batter1) in enumerate(starters_batter_1, 1):
-        print(f"{i}番 ({game_pos}) {batter1.name} {batter1.trajectory} {batter1.meet} {batter1.power} {batter1.speed} {batter1.arm} {batter1.fielding} {batter1.catching}")
-    p_role1, pitcher = starters_pitcher_1
-    print(f"({p_role1}) {pitcher.name} {pitcher.speed}km {pitcher.control} {pitcher.stamina}")
-
-    print("\n--- 本日のスタメン ---")
-    for i, (game_pos, batter2) in enumerate(starters_batter_2, 1):
-        print(f"{i}番 ({game_pos}) {batter2.name} {batter2.trajectory} {batter2.meet} {batter2.power} {batter2.speed} {batter2.arm} {batter2.fielding} {batter2.catching}")
-    p_role2, pitcher2 = starters_pitcher_2
-    print(f"({p_role2}) {pitcher2.name} {pitcher2.speed}km {pitcher2.control} {pitcher2.stamina}")
+    # zipを使ってバッターと成績リストを同時にループさせる
+    for i, ((game_pos, batter), stats_str) in enumerate(zip(starters_batter, season_stats_list), 1):
+        # 能力値の代わりに引数で受け取った成績文字列を表示
+        print(f"{i}番 ({game_pos}) {batter.name} [{stats_str}]")
+        
+    p_role, pitcher = starters_pitcher
+    print(f"({p_role}) {pitcher.name} {pitcher.speed}km {pitcher.control} {pitcher.stamina}")
+    print("\n")

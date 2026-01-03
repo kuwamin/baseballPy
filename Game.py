@@ -1,8 +1,10 @@
 # ライブラリインポート
 import AquireData
 import DecideBatter
+import DecideOrder
 import DecidePitcher
 import DisplayStarter
+import GetSeasonStats
 import OutputExam
 import RunAtBat
 
@@ -26,10 +28,17 @@ def game(file_path, game_number):
     pitchers_2, batters_2= AquireData.Aquire_data(file_path, team_name_2)
 
     # スタメン決定
-    starters_batter_1 = DecideBatter.decide_batter(batters_1)
+    starters_list_1 = DecideBatter.decide_batter(batters_1)
+    starters_batter_1 = DecideOrder.decide_order(starters_list_1)
+    starters_list_2 = DecideBatter.decide_batter(batters_2)
+    starters_batter_2 = DecideOrder.decide_order(starters_list_2)
+
     starters_pitcher_1 = DecidePitcher.decide_pitcher(pitchers_1, game_number)
-    starters_batter_2 = DecideBatter.decide_batter(batters_2)
     starters_pitcher_2 = DecidePitcher.decide_pitcher(pitchers_2, game_number)
+
+
+    stats_1 = [GetSeasonStats.get_season_stats(s[1]) for s in starters_batter_1]
+    stats_2 = [GetSeasonStats.get_season_stats(s[1]) for s in starters_batter_2]
 
     # 全スタメンの成績（前の試合のstats）をリセット
     all_starters = [s[1] for s in starters_batter_1 + starters_batter_2] + [starters_pitcher_1[1], starters_pitcher_2[1]]
@@ -50,9 +59,10 @@ def game(file_path, game_number):
     p2.stats['games'] += 1
     p2.stats['starts'] += 1
 
-    # スタメン表示
-    DisplayStarter.desplay_starter(starters_batter_1,starters_pitcher_1,  starters_batter_2,starters_pitcher_2)
-    
+    # スタメン表示 (引数に成績リストを追加)
+    DisplayStarter.desplay_starter(starters_batter_1, starters_pitcher_1, stats_1)
+    DisplayStarter.desplay_starter(starters_batter_2, starters_pitcher_2, stats_2)
+
     # 打席実行
     while inning_number <= 9:
         print(f"--- {inning_number}回{'表' if top_bottom == 0 else '裏'}の攻撃 ---")
@@ -113,7 +123,7 @@ def game(file_path, game_number):
 
 
     # QS / HQS / 完投 / 完封 の判定
-    # 投手と、その投手が許した得点（＝相手チームの得点）をペアにする
+    # 投手と、その投力が許した得点（＝相手チームの得点）をペアにする
     pitcher_evals = [
         (p1, total_score_2),
         (p2, total_score_1) 

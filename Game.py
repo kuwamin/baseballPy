@@ -37,8 +37,11 @@ def game(file_path, game_number):
     starters_pitcher_2 = DecidePitcher.decide_pitcher(pitchers_2, game_number)
 
 
-    stats_1 = [GetSeasonStats.get_season_stats(s[1]) for s in starters_batter_1]
-    stats_2 = [GetSeasonStats.get_season_stats(s[1]) for s in starters_batter_2]
+    b_stats_1 = [GetSeasonStats.get_batter_stats(s[1]) for s in starters_batter_1]
+    b_stats_2 = [GetSeasonStats.get_batter_stats(s[1]) for s in starters_batter_2]
+
+    p_stats_1 = GetSeasonStats.get_pitcher_stats(starters_pitcher_1[1])
+    p_stats_2 = GetSeasonStats.get_pitcher_stats(starters_pitcher_2[1])
 
     # 全スタメンの成績（前の試合のstats）をリセット
     all_starters = [s[1] for s in starters_batter_1 + starters_batter_2] + [starters_pitcher_1[1], starters_pitcher_2[1]]
@@ -60,8 +63,8 @@ def game(file_path, game_number):
     p2.stats['starts'] += 1
 
     # スタメン表示 (引数に成績リストを追加)
-    DisplayStarter.desplay_starter(starters_batter_1, starters_pitcher_1, stats_1)
-    DisplayStarter.desplay_starter(starters_batter_2, starters_pitcher_2, stats_2)
+    DisplayStarter.desplay_starter(starters_batter_1, starters_pitcher_1, b_stats_1, p_stats_1)
+    DisplayStarter.desplay_starter(starters_batter_2, starters_pitcher_2, b_stats_2, p_stats_2)
 
     # 打席実行
     while inning_number <= 9:

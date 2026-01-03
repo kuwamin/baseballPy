@@ -95,18 +95,47 @@ def game(file_path, game_number):
     # 事後処理
     print(f"{sum(score_2)} - {sum(score_1)}")
 
-    # QS / HQS の判定
-    for p in [starters_pitcher_1[1], starters_pitcher_2[1]]:
+    total_score_1 = sum(score_1) 
+    total_score_2 = sum(score_2)  
+
+    p1 = starters_pitcher_1[1] 
+    p2 = starters_pitcher_2[1]
+
+    # 勝利・敗戦の判定
+    if total_score_1 > total_score_2:
+        # 後攻側が勝利
+        p1.stats['wins'] += 1
+        p2.stats['losses'] += 1
+    elif total_score_2 > total_score_1:
+        # 先行側が勝利
+        p2.stats['wins'] += 1
+        p1.stats['losses'] += 1
+
+
+    # QS / HQS / 完投 / 完封 の判定
+    # 投手と、その投手が許した得点（＝相手チームの得点）をペアにする
+    pitcher_evals = [
+        (p1, total_score_2),
+        (p2, total_score_1) 
+    ]
+
+    for p, score_allowed in pitcher_evals:
         outs = p.stats.get('outs_pitched', 0)
         er = p.stats.get('自責点', 0)
 
-        # HQS判定（7回2自責点以下）
+        # QS/HQS 判定
         if outs >= 21 and er <= 2:
             p.stats['hqs'] += 1
-            p.stats['qs'] += 1  # HQSなら当然QSも達成
-        # QS判定（6回3自責点以下）
+            p.stats['qs'] += 1
         elif outs >= 18 and er <= 3:
             p.stats['qs'] += 1
+        
+        # 完投判定 (9イニング = 27アウト)
+        if outs >= 27:
+            p.stats['complete_games'] += 1
+            # 完封判定 (完投かつ失点0)
+            if score_allowed == 0:
+                p.stats['shutouts'] += 1
 
 
     # 全選手をひとまとめにする（投手と野手両方）

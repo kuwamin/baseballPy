@@ -9,7 +9,7 @@ def main():
     """
 
     # 変数
-    total_games = 14   #試合数
+    total_games = 130   #試合数
     file_path = 'test.xlsx'
 
     # 事前処理

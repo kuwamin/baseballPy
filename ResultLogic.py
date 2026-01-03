@@ -20,7 +20,7 @@ def result_logic(trajectory, meet, power, speed_b, eye, speed_p, control, breaki
     walk_per_corr = EyeLogic.eye_logic(eye)
 
     # 投手・野手能力に応じて確率変動
-    walk_per += (walk_per_corr - control) * 1
+    walk_per += (walk_per_corr - control) * 1.5
 
     # マイナス値を0に補正
     single_per = max(0, single_per) 

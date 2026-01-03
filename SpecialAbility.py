@@ -125,6 +125,6 @@ def special_ability_p(pitcher, batter, is_risp):
     elif pitcher.fastball_life == "F":
         speed_corr -= 4
     elif pitcher.fastball_life == "G":
-        speed_corr += 8
+        speed_corr -= 8
         
     return speed_corr, control_corr, breaking_ball_corr

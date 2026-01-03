@@ -35,21 +35,21 @@ class Pitcher(Player):
             'losses': data_dict.get('敗北', 0),
             'saves': data_dict.get('セーブ', 0),
             'holds': data_dict.get('ホールド', 0),
-            'outs_pitched': data_dict.get('投球アウト数', 0),
+            'outs_pitched': data_dict.get('投球アウト数', 0), # 計算用
             'complete_games': data_dict.get('完投', 0),
             'shutouts': data_dict.get('完封', 0),
-            'batters_faced': data_dict.get('打者数', 0),
+            'bf': data_dict.get('打者数', 0),                 
             'strikeouts': data_dict.get('奪三振', 0),
-            'walks': data_dict.get('与四球', 0),
-            'hit_by_pitch': data_dict.get('与死球', 0),
+            'walks_allowed': data_dict.get('与四球', 0),       
+            'hbp_allowed': data_dict.get('与死球', 0),        
             'hr_allowed': data_dict.get('被本塁打', 0),
             'hits_allowed': data_dict.get('被安打', 0),
-            'runs_allowed': data_dict.get('失点', 0),
-            'earned_runs': data_dict.get('自責点', 0),
+            '失点': data_dict.get('失点', 0),                 
+            '自責点': data_dict.get('自責点', 0),              
             'qs': data_dict.get('QS', 0),
             'hqs': data_dict.get('HQS', 0),
-            'risp_batters': data_dict.get('得点圏打者数', 0),
-            'risp_hits': data_dict.get('得点圏被安打', 0)
+            'risp_bf': data_dict.get('得点圏被打数', 0),       
+            'risp_hits_allowed': data_dict.get('得点圏被安打', 0)
         }
 
     def __repr__(self):
@@ -98,7 +98,7 @@ class Batter(Player):
             'stolen_bases': data_dict.get('盗塁成功', 0),
             'caught_stealing': data_dict.get('盗塁死', 0),
             'gdp': data_dict.get('併殺打', 0),
-            'risp_pa': data_dict.get('得点圏打数', 0),
+            'risp_ab': data_dict.get('得点圏打数', 0),
             'risp_hits': data_dict.get('得点圏安打', 0)
         }
 

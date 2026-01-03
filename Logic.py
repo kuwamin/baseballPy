@@ -31,7 +31,9 @@ def logic(pitcher, batter, game_condition, is_risp):
     rbi = game_condition[4] - old_score
 
     # --- 5. 成績(stats)の更新 ---
-    UpdateStats.update_stats(pitcher, batter, result, is_risp, rbi)
+    UpdateStats.update_stats_b(pitcher, batter, result, is_risp, rbi)
+    UpdateStats.update_stats_p(pitcher, batter, result, is_risp, rbi)
+
     print(f"{batter.name} : {result}")
     
     return game_condition

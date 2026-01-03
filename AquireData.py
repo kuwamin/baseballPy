@@ -2,8 +2,8 @@ from openpyxl import load_workbook
 from Player import Batter, Pitcher
 
 # テストコード
-def test(team_name):
-    file_path = 'test.xlsx'
+def Aquire_data(file_path, team_name):
+    
     wb = load_workbook(file_path, data_only=True)
     
     # シート名の定義
@@ -19,6 +19,7 @@ def test(team_name):
 
 
     # 選手データの取得
+    # 投手（_p）取得
     for row_values in sheet[0].iter_rows(min_row=2, values_only=True):
 
         # ヘッダーと行の値を組み合わせて辞書を作成
@@ -27,6 +28,7 @@ def test(team_name):
         p = Pitcher(data_dict)
         pitchers.append(p)
 
+    # 野手（_b）取得
     for row_values in sheet[1].iter_rows(min_row=2, values_only=True):
 
         # ヘッダーと行の値を組み合わせて辞書を作成
@@ -34,15 +36,5 @@ def test(team_name):
 
         b = Batter(data_dict)
         batters.append(b)
-
-    '''
-    print("\n--- 投手リスト ---")
-    print(pitchers)
-    print(pitchers[0].name)
-
-    print("\n--- 野手リスト ---")
-    print(batters)
-    print(batters[0].name)
-    '''
 
     return pitchers, batters

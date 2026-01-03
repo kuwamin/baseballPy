@@ -1,4 +1,5 @@
-def test(starters_batter_1,starters_pitcher_1,  starters_batter_2,starters_pitcher_2):
+def desplay_starter(starters_batter_1,starters_pitcher_1,  starters_batter_2,starters_pitcher_2):
+
     print("--- 本日のスタメン ---")
     # タプルをアンパックして受け取る
     for i, (game_pos, batter1) in enumerate(starters_batter_1, 1):

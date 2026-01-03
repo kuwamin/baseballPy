@@ -1,5 +1,5 @@
 # テストコード
-def test(pitchers):
+def decide_pitcher(pitchers):
     candidates = pitchers[:]
     starters_pitcher = None
 

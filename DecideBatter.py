@@ -1,5 +1,5 @@
 # テストコード
-def test(batters):
+def decide_batter(batters):
     positions = ['捕', '一', '二', '三', '遊', '左', '中', '右', '指']
     starter_batter = [] # (ポジション名, 選手オブジェクト) のタプルを入れるリスト
     

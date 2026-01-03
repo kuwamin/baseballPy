@@ -1,31 +1,42 @@
 import random
 
+import EyeLogic
+import StrikeoutLogic
 
-def result_logic(trajectory, meet, power, speed):
+
+def result_logic(trajectory, meet, power, speed_b, eye, speed_p, control, breaking_ball):
+
 
     # --- 1. 各結果の基本値計算 ---
-    singlePer = (100 + (trajectory * -30) // 4 + (meet * 140 + power * -60 + speed * 15) // 50 - random.randrange(40) + random.randrange(40))
-    doublePer = (-25 + (trajectory * 10) // 4 + (meet * 0 + power * 25 + speed * 20) // 50 - random.randrange(10) + random.randrange(10))
-    triplePer = (-12 + (trajectory * 0) // 4 + (meet * 0 + power * 0 + speed * 15) // 50 - random.randrange(5) + random.randrange(5))
-    homeRunPer = (-40 + (trajectory * 20) // 4 + (meet * -10 + power * 60 + speed * -10) // 50 - random.randrange(16) + random.randrange(16))
-    walkPer = (-40 + (trajectory * 30) // 4 + (meet * 0 + power * 80 + speed * -10) // 50 - random.randrange(16) + random.randrange(16))
-    hitByPitchPer = (10 + (trajectory * 0) // 4 + (meet * 0 + power * 0 + speed * 0) // 50 - random.randrange(4) + random.randrange(4))
+    single_per = (100 + (trajectory * -30) // 4 + (meet * 140 + power * -60 + speed_b * 15) // 50 - random.randrange(40) + random.randrange(40))
+    double_per = (-25 + (trajectory * 10) // 4 + (meet * 0 + power * 25 + speed_b * 20) // 50 - random.randrange(10) + random.randrange(10))
+    triple_per = (-12 + (trajectory * 0) // 4 + (meet * 0 + power * 0 + speed_b * 15) // 50 - random.randrange(5) + random.randrange(5))
+    homeRun_per = (-40 + (trajectory * 20) // 4 + (meet * -10 + power * 60 + speed_b * -10) // 50 - random.randrange(16) + random.randrange(16))
+    walk_per = (-20 + (trajectory * 30) // 4 + (meet * 0 + power * 80 + speed_b * -10) // 50 - random.randrange(32) + random.randrange(32))
+    HBP_per = (10 + (trajectory * 0) // 4 + (meet * 0 + power * 0 + speed_b * 0) // 50 - random.randrange(4) + random.randrange(4))
+
+
+    # 選球眼のランクを数値に変換
+    walk_per_corr = EyeLogic.eye_logic(eye)
+
+    # 投手・野手能力に応じて確率変動
+    walk_per += (walk_per_corr - control) * 1
 
     # マイナス値を0に補正
-    singlePer = max(0, singlePer) 
-    doublePer = max(0, doublePer)
-    triplePer = max(0, triplePer)
-    homeRunPer = max(0, homeRunPer)
-    walkPer = max(0, walkPer)
-    hitByPitchPer = max(0, hitByPitchPer)
+    single_per = max(0, single_per) 
+    double_per = max(0, double_per)
+    triple_per = max(0, triple_per)
+    homeRun_per = max(0, homeRun_per)
+    walk_per = max(0, walk_per)
+    HBP_per = max(0, HBP_per)
 
     # --- 2. 累積確率の計算 ---
-    sP = singlePer
-    dP = doublePer + sP
-    tP = triplePer + dP
-    hrP = homeRunPer + tP
-    wP = walkPer + hrP
-    hbpP = hitByPitchPer + wP
+    sP = single_per
+    dP = double_per + sP
+    tP = triple_per + dP
+    hrP = homeRun_per + tP
+    wP = walk_per + hrP
+    hbpP = HBP_per + wP
 
     # --- 3. 判定実行 ---
     num = random.randrange(1000)
@@ -44,9 +55,6 @@ def result_logic(trajectory, meet, power, speed):
     elif num <= hbpP:
         result = "HBP"
     else:
-        if random.randrange(100) < 20:
-            result = "SO"
-        else:
-            result = "OUT"
+        result = StrikeoutLogic.strikeout_logic(speed_p, breaking_ball, meet)
 
     return result

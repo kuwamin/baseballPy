@@ -11,10 +11,10 @@ def logic(pitcher, batter, game_condition, is_risp):
     """
 
     # 投手能力による変動
-    meet_corr_p, power_corr_p = PitcherAbility.pitcher_ability(pitcher)
+    meet_corr_p, power_corr_p = PitcherAbility.pitcher_ability(pitcher, batter, is_risp)
 
     # 特殊能力による能力変動
-    meet_corr_SA, power_corr_SA = SpecialAbility.special_ability(pitcher, batter, is_risp)
+    meet_corr_SA, power_corr_SA = SpecialAbility.special_ability_b(pitcher, batter, is_risp)
 
     # 能力変動を受けて最終的な能力値決定
     trajectory = batter.trajectory
@@ -38,6 +38,6 @@ def logic(pitcher, batter, game_condition, is_risp):
     UpdateStats.update_stats_b(pitcher, batter, result, is_risp, rbi)
     UpdateStats.update_stats_p(pitcher, batter, result, is_risp, rbi)
 
-    print(f"{batter.name} : {result}")
+    print(f"({batter.position}) {batter.name} : {result}")
     
     return game_condition

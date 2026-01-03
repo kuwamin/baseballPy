@@ -4,12 +4,12 @@ import random
 def result_logic(trajectory, meet, power, speed):
 
     # --- 1. 各結果の基本値計算 ---
-    singlePer = (100 + (trajectory * -30) // 4 + (meet * 140 + power * -60 + speed * 15) // 50 - random.randrange(40) + random.randrange(30))
-    doublePer = (-25 + (trajectory * 10) // 4 + (meet * 0 + power * 25 + speed * 20) // 50 - random.randrange(10) + random.randrange(8))
-    triplePer = (-12 + (trajectory * 0) // 4 + (meet * 0 + power * 0 + speed * 15) // 50 - random.randrange(5) + random.randrange(4))
-    homeRunPer = (-40 + (trajectory * 20) // 4 + (meet * -10 + power * 60 + speed * -10) // 50 - random.randrange(16) + random.randrange(12))
-    walkPer = (-40 + (trajectory * 30) // 4 + (meet * 0 + power * 80 + speed * -10) // 50 - random.randrange(16) + random.randrange(12))
-    hitByPitchPer = (10 + (trajectory * 0) // 4 + (meet * 0 + power * 0 + speed * 0) // 50 - random.randrange(4) + random.randrange(3))
+    singlePer = (100 + (trajectory * -30) // 4 + (meet * 140 + power * -60 + speed * 15) // 50 - random.randrange(40) + random.randrange(40))
+    doublePer = (-25 + (trajectory * 10) // 4 + (meet * 0 + power * 25 + speed * 20) // 50 - random.randrange(10) + random.randrange(10))
+    triplePer = (-12 + (trajectory * 0) // 4 + (meet * 0 + power * 0 + speed * 15) // 50 - random.randrange(5) + random.randrange(5))
+    homeRunPer = (-40 + (trajectory * 20) // 4 + (meet * -10 + power * 60 + speed * -10) // 50 - random.randrange(16) + random.randrange(16))
+    walkPer = (-40 + (trajectory * 30) // 4 + (meet * 0 + power * 80 + speed * -10) // 50 - random.randrange(16) + random.randrange(16))
+    hitByPitchPer = (10 + (trajectory * 0) // 4 + (meet * 0 + power * 0 + speed * 0) // 50 - random.randrange(4) + random.randrange(4))
 
     # マイナス値を0に補正
     singlePer = max(0, singlePer) 

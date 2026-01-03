@@ -12,9 +12,9 @@ def output_exam(file_path, all_players):
         '三振': 'so', '得点圏打数': 'risp_ab', '得点圏安打': 'risp_hits',
         
         # 投手項目
-        '打者数': 'bf', '被安打': 'hits_allowed', '被本塁打': 'hr_allowed',
-        '与四球': 'walks_allowed', '与死球': 'hbp_allowed', '奪三振': 'strikeouts',
-        '失点': '失点', '自責点': '自責点', 
+        '登板数': 'games','先発数': 'starts','打者数': 'bf', '被安打': 'hits_allowed',
+        '被本塁打': 'hr_allowed','与四球': 'walks_allowed', '与死球': 'hbp_allowed',
+        '奪三振': 'strikeouts','失点': '失点', '自責点': '自責点', 'QS': 'qs', 'HQS': 'hqs',
         '得点圏被打数': 'risp_bf', '得点圏被安打': 'risp_hits_allowed'
     }
 

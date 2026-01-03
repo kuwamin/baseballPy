@@ -9,15 +9,15 @@ def main():
     """
 
     # 変数
-    game_number = 10    #試合数
+    total_games = 143    #試合数
     file_path = 'test.xlsx'
 
     # 事前処理
     ResetResult.reset_result(file_path)
 
     # 年単位（143試合）実行
-    for i in range(game_number):
-        Game.game(file_path)
+    for game_number in range(1, total_games + 1):
+        Game.game(file_path, game_number)
 
     # 事後処理
     SummaryResult.test()

@@ -1,5 +1,6 @@
 import random
 import BaseAdvancementLogic
+import PitcherAbility
 import ResultLogic
 import SpecialAbility
 import UpdateStats
@@ -9,13 +10,16 @@ def logic(pitcher, batter, game_condition, is_risp):
     打席の結果を判定し、進塁処理を行い、成績を更新する
     """
 
-    # 0. 特殊能力による能力変動
-    meet_corr, power_corr = SpecialAbility.test(pitcher, batter, is_risp)
+    # 投手能力による変動
+    meet_corr_p, power_corr_p = PitcherAbility.pitcher_ability(pitcher)
+
+    # 特殊能力による能力変動
+    meet_corr_SA, power_corr_SA = SpecialAbility.special_ability(pitcher, batter, is_risp)
 
     # 能力変動を受けて最終的な能力値決定
     trajectory = batter.trajectory
-    meet = batter.meet + meet_corr
-    power = batter.power + power_corr
+    meet = batter.meet + meet_corr_p + meet_corr_SA
+    power = batter.power + power_corr_p + power_corr_SA
     speed = batter.speed
 
     # 打席結果決定

@@ -1,11 +1,14 @@
-# テストコード
-def decide_pitcher(pitchers):
-    candidates = pitchers[:]
-    starters_pitcher = None
+def decide_pitcher(pitchers, game_number):
+    """
+    先発投手を選出する
+    """
+    # 1. 先発適性（"先"）を持つ投手だけを抽出
+    starters_list = [p for p in pitchers if p.role == "先"]
 
-    for p in candidates:
-        if p.role == "先":
-            starters_pitcher = ("先発", p)
-            break
+    # 2. ローテーションのインデックスを計算
+    rotation_index = (game_number - 1) % len(starters_list)
 
-    return starters_pitcher
+    # 3. 該当する投手を選出
+    p = starters_list[rotation_index]
+    
+    return ("先発", p)

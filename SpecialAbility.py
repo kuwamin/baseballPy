@@ -1,4 +1,4 @@
-def test(pitcher, batter, is_risp):
+def special_ability(pitcher, batter, is_risp):
 
     # グローバル変数化
     meet_corr = 0

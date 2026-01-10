@@ -6,14 +6,13 @@ import StrikeoutLogic
 
 def result_logic(trajectory, meet, power, speed_b, eye, speed_p, control, breaking_ball):
 
-
     # --- 1. 各結果の基本値計算 ---
-    single_per = (100 + (trajectory * -30) // 4 + (meet * 140 + power * -60 + speed_b * 15) // 50 - random.randrange(40) + random.randrange(40))
-    double_per = (-25 + (trajectory * 10) // 4 + (meet * 0 + power * 25 + speed_b * 20) // 50 - random.randrange(10) + random.randrange(10))
-    triple_per = (-12 + (trajectory * 0) // 4 + (meet * 0 + power * 0 + speed_b * 15) // 50 - random.randrange(5) + random.randrange(5))
-    homeRun_per = (-40 + (trajectory * 20) // 4 + (meet * -10 + power * 60 + speed_b * -10) // 50 - random.randrange(16) + random.randrange(16))
-    walk_per = (-20 + (trajectory * 30) // 4 + (meet * 0 + power * 80 + speed_b * -10) // 50 - random.randrange(32) + random.randrange(32))
-    HBP_per = (10 + (trajectory * 0) // 4 + (meet * 0 + power * 0 + speed_b * 0) // 50 - random.randrange(4) + random.randrange(4))
+    single_per = (110 + (trajectory * -30) // 4 + (meet * 140 + power * -60 + speed_b * 15) // 50 - random.randrange(30) + random.randrange(40))
+    double_per = (-25 + (trajectory * 10) // 4 + (meet * 0 + power * 25 + speed_b * 20) // 50 - random.randrange(8) + random.randrange(10))
+    triple_per = (-15 + (trajectory * 0) // 4 + (meet * 0 + power * 0 + speed_b * 15) // 50 - random.randrange(4) + random.randrange(5))
+    homeRun_per = (-40 + (trajectory * 20) // 4 + (meet * -10 + power * 60 + speed_b * -10) // 50 - random.randrange(12) + random.randrange(16))
+    walk_per = (-15 + (trajectory * 30) // 4 + (meet * 0 + power * 80 + speed_b * -10) // 50 - random.randrange(24) + random.randrange(32))
+    HBP_per = (10 + (trajectory * 0) // 4 + (meet * 0 + power * 0 + speed_b * 0) // 50 - random.randrange(3) + random.randrange(4))
 
 
     # 選球眼のランクを数値に変換

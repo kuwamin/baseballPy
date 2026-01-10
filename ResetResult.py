@@ -2,7 +2,7 @@ import pandas as pd
 
 def reset_result(file_path):
     """
-    成績（スタッツ）列を0にリセットする
+    Excelのの成績列を0にリセットする
     """
 
     excel_data = pd.read_excel(file_path, sheet_name=None)  # sheet_name=None で全シート読み込み

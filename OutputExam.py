@@ -1,6 +1,6 @@
 import pandas as pd
 
-def output_exam(file_path, all_players):
+def output_exam(file_path, team_name_1, team_name_2, all_players):
 
     excel_data = pd.read_excel(file_path, sheet_name=None)
     
@@ -26,10 +26,10 @@ def output_exam(file_path, all_players):
         is_batter = hasattr(player, 'position')
         
         target_sheet = ""
-        if p_team == "test1":
-             target_sheet = "test1_b" if is_batter else "test1_p"
-        elif p_team == "test2":
-             target_sheet = "test2_b" if is_batter else "test2_p"
+        if p_team == team_name_1:
+             target_sheet = team_name_1+"_b" if is_batter else team_name_1+"_p"
+        elif p_team == team_name_2:
+             target_sheet = team_name_2+"_b" if is_batter else team_name_2+"_p"
 
         if target_sheet in excel_data:
             df = excel_data[target_sheet]

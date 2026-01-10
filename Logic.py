@@ -48,6 +48,6 @@ def logic(pitcher, batter, game_condition, is_risp):
     UpdateStats.update_stats_b(pitcher, batter, result, is_risp, rbi)
     UpdateStats.update_stats_p(pitcher, batter, result, is_risp, rbi)
 
-    print(f"({batter.position}) {batter.name} : {result}")
+    # print(f"({batter.position}) {batter.name} : {result}")
     
     return game_condition

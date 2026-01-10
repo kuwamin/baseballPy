@@ -2,8 +2,9 @@ def calculate_score(player, weight):
     """
     選手の総合評価スコアを計算する
     """
-    batting_score = (player.meet * 1.2) + player.power
-    fielding_score = player.fielding * weight
+    batting_score = player.trajectory * 10 + (player.meet + player.power) * 2 + player.speed
+    fielding_score = (player.arm + player.fielding + player.catching) * weight
+    
     return batting_score + fielding_score
 
 
@@ -13,8 +14,8 @@ def decide_batter(batters):
     """
     # 守備を重視する重み
     pos_weights = {
-        '捕': 0.8, '遊': 0.7, '二': 0.6, '中': 0.5,
-        '三': 0.4, '右': 0.3, '左': 0.3, '一': 0.2
+        '捕': 1.0, '遊': 0.9, '二': 0.8, '中': 0.7,
+        '三': 0.4, '右': 0.3, '左': 0.2, '一': 0.1
     }
     
     selected_players = []

@@ -3,12 +3,16 @@ import AquireData
 import DecideBatter
 import DecideOrder
 import DecidePitcher
+import DecideTeam
 import DisplayStarter
 import GetSeasonStats
 import OutputExam
 import RunAtBat
 
 def game(file_path, game_number):
+    """
+    1試合実行
+    """
     
     # 変数
     inning_number = 1    #イニング
@@ -18,8 +22,8 @@ def game(file_path, game_number):
     score_1 = []
     score_2 = []
     game_condition = [0,0,0,0,0]    # 一塁、二塁、三塁、アウトカウント、イニングでの得点
-    team_name_1 = 'test1'
-    team_name_2 = 'test2'
+
+    team_name_1, team_name_2 = DecideTeam.decide_team(game_number)
 
 
     # 事前処理
@@ -28,18 +32,18 @@ def game(file_path, game_number):
     pitchers_2, batters_2= AquireData.Aquire_data(file_path, team_name_2)
 
     # スタメン決定
-    starters_list_1 = DecideBatter.decide_batter(batters_1)
-    starters_batter_1 = DecideOrder.decide_order(starters_list_1)
+    starters_list_1 = DecideBatter.decide_batter(batters_1) # レギュラーメンバー選出
+    starters_batter_1 = DecideOrder.decide_order(starters_list_1)   #打順決定
     starters_list_2 = DecideBatter.decide_batter(batters_2)
     starters_batter_2 = DecideOrder.decide_order(starters_list_2)
 
+    # 先発投手決定
     starters_pitcher_1 = DecidePitcher.decide_pitcher(pitchers_1, game_number)
     starters_pitcher_2 = DecidePitcher.decide_pitcher(pitchers_2, game_number)
 
-
+    # 成績表示用の文字列生成、取得
     b_stats_1 = [GetSeasonStats.get_batter_stats(s[1]) for s in starters_batter_1]
     b_stats_2 = [GetSeasonStats.get_batter_stats(s[1]) for s in starters_batter_2]
-
     p_stats_1 = GetSeasonStats.get_pitcher_stats(starters_pitcher_1[1])
     p_stats_2 = GetSeasonStats.get_pitcher_stats(starters_pitcher_2[1])
 
@@ -49,26 +53,31 @@ def game(file_path, game_number):
         # すべての項目を0で初期化
         p.stats = {key: 0 for key in p.stats}
 
-    # 1. 野手の試合数をカウント
+    # 試合数カウント
+    # 野手の試合数をカウント
     for b in [s[1] for s in starters_batter_1 + starters_batter_2]:
         b.stats['games'] += 1
 
-    # 2. 投手の登板数・先発数をカウント
+    # 投手の登板数・先発数をカウント
     p1 = starters_pitcher_1[1]
     p2 = starters_pitcher_2[1]
-
     p1.stats['games'] += 1
     p1.stats['starts'] += 1
     p2.stats['games'] += 1
     p2.stats['starts'] += 1
 
+
     # スタメン表示 (引数に成績リストを追加)
-    DisplayStarter.desplay_starter(starters_batter_1, starters_pitcher_1, b_stats_1, p_stats_1)
-    DisplayStarter.desplay_starter(starters_batter_2, starters_pitcher_2, b_stats_2, p_stats_2)
+    # 成績表示
+    DisplayStarter.desplay_starter_b(starters_batter_1, b_stats_1)
+    DisplayStarter.desplay_starter_p(starters_pitcher_1, p_stats_1)
+    DisplayStarter.desplay_starter_b(starters_batter_2, b_stats_2)
+    DisplayStarter.desplay_starter_p(starters_pitcher_2, p_stats_2)
+
 
     # 打席実行
     while inning_number <= 9:
-        print(f"--- {inning_number}回{'表' if top_bottom == 0 else '裏'}の攻撃 ---")
+        # print(f"--- {inning_number}回{'表' if top_bottom == 0 else '裏'}の攻撃 ---")
         
         if top_bottom == 0:  # 表
             while True:
@@ -80,7 +89,7 @@ def game(file_path, game_number):
                 batter_number_2 += 1
                 if game_condition[3] == 3:  # 3アウト
                     score_2.append(game_condition[4])
-                    print(f"{game_condition[4]} 点")
+                    # print(f"{game_condition[4]} 点")
 
                     top_bottom = 1  
                     game_condition = [0,0,0,0,0]   
@@ -97,7 +106,7 @@ def game(file_path, game_number):
                 batter_number_1 += 1
                 if game_condition[3] == 3:
                     score_1.append(game_condition[4])
-                    print(f"{game_condition[4]} 点")
+                    # print(f"{game_condition[4]} 点")
 
                     top_bottom = 0
                     game_condition = [0,0,0,0,0]   
@@ -106,7 +115,7 @@ def game(file_path, game_number):
         
 
     # 事後処理
-    print(f"{sum(score_2)} - {sum(score_1)}")
+    print(f"{sum(score_2)} - {sum(score_1)}\n")
 
     total_score_1 = sum(score_1) 
     total_score_2 = sum(score_2)  
@@ -159,4 +168,4 @@ def game(file_path, game_number):
     all_active_players.append(starters_pitcher_2[1])
 
     # エクセル更新実行
-    OutputExam.output_exam('test.xlsx', all_active_players)
+    OutputExam.output_exam(file_path, team_name_1, team_name_2, all_active_players)

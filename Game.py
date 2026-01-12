@@ -9,7 +9,7 @@ import GetSeasonStats
 import OutputExam
 import RunAtBat
 
-def game(file_path, game_number):
+def game(file_path, game_number, teams, total_games_team):
     """
     1試合実行
     """
@@ -23,7 +23,7 @@ def game(file_path, game_number):
     score_2 = []
     game_condition = [0,0,0,0,0]    # 一塁、二塁、三塁、アウトカウント、イニングでの得点
 
-    team_name_1, team_name_2 = DecideTeam.decide_team(game_number)
+    team_name_1, team_name_2 = DecideTeam.decide_team(game_number, teams, total_games_team)
 
 
     # 事前処理

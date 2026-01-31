@@ -27,6 +27,10 @@ class Pitcher(Player):
         self.quick = data_dict.get('クイック')
         self.recovery = data_dict.get('回復')
 
+        # --- 疲労 ---
+        self.fatigue_stamina = data_dict.get('減少体力', 0) or 0
+        self.accumulated_fatigue = data_dict.get('蓄積疲労', 0) or 0
+
         # --- 成績 ---
         self.stats = {
             'games': data_dict.get('登板数', 0),
@@ -35,7 +39,7 @@ class Pitcher(Player):
             'losses': data_dict.get('敗北', 0),
             'saves': data_dict.get('セーブ', 0),
             'holds': data_dict.get('ホールド', 0),
-            'outs_pitched': data_dict.get('投球アウト数', 0), # 計算用
+            'outs_pitched': data_dict.get('投球アウト数', 0),
             'complete_games': data_dict.get('完投', 0),
             'shutouts': data_dict.get('完封', 0),
             'bf': data_dict.get('打者数', 0),                 
@@ -45,7 +49,7 @@ class Pitcher(Player):
             'hr_allowed': data_dict.get('被本塁打', 0),
             'hits_allowed': data_dict.get('被安打', 0),
             '失点': data_dict.get('失点', 0),                 
-            '自責点': data_dict.get('自責点', 0),              
+            '自責点': data_dict.get('自責点', 0),               
             'qs': data_dict.get('QS', 0),
             'hqs': data_dict.get('HQS', 0),
             'risp_bf': data_dict.get('得点圏被打数', 0),       

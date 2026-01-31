@@ -1,7 +1,4 @@
-import SpecialAbility
-
-
-def pitcher_ability(pitcher, batter, is_risp):
+def pitcher_ability(speed_p, control, breaking_ball):
 
     # 基準値（平均値）
     speed_avg = 147
@@ -13,15 +10,15 @@ def pitcher_ability(pitcher, batter, is_risp):
     power_corr = 0
 
     # 球速による補正
-    meet_corr += (pitcher.speed - speed_avg) * (-9)/8
-    power_corr += (pitcher.speed - speed_avg) * (-6)/8
+    meet_corr += (speed_p - speed_avg) * (-9)/8
+    power_corr += (speed_p - speed_avg) * (-6)/8
 
     # コントロールによる補正
-    meet_corr += (pitcher.control - control_avg) * (-0)/30
-    power_corr += (pitcher.control - control_avg) * (-6)/30
+    meet_corr += (control - control_avg) * (-0)/30
+    power_corr += (control - control_avg) * (-6)/30
 
     # 変化球による補正
-    meet_corr += (pitcher.breaking_ball - breaking_ball_avg) * (-6)/4
-    power_corr += (pitcher.breaking_ball - breaking_ball_avg) * (-3)/4
+    meet_corr += (breaking_ball - breaking_ball_avg) * (-6)/4
+    power_corr += (breaking_ball - breaking_ball_avg) * (-3)/4
 
     return meet_corr, power_corr

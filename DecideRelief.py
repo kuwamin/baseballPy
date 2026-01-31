@@ -1,13 +1,11 @@
 import random
 
-
 def decide_relief(pitchers, already_played_records, inning, score_diff):
     """
     役割に応じたリリーフ選出
     """
     already_played = [r[0] for r in already_played_records]
     
-    # 接戦（3点差以内）の終盤判断
     if inning >= 9 and 0 < score_diff <= 3:
         role_target = ["抑"] 
     elif inning >= 7 and 0 < score_diff <= 3:
@@ -17,10 +15,18 @@ def decide_relief(pitchers, already_played_records, inning, score_diff):
     else:
         role_target = ["継"] 
 
-    candidates = [p for p in pitchers if p not in already_played and p.role in role_target]
+    # フィルタリング条件：減少体力が一定以下（例: 最大スタミナの半分以下）
+    candidates = [
+        p for p in pitchers 
+        if p not in already_played 
+        and p.role in role_target
+        and p.fatigue_stamina < (p.stamina * 0.5)
+    ]
+    
+    # もし条件に合う選手が誰もいない場合は、全リリーフから選出
     if not candidates:
-        candidates = [p for p in pitchers if p not in already_played]
+        candidates = [p for p in pitchers if p not in already_played and p.role != "先"]
 
-    # 登板過多を防ぐため、ゲーム数の少ない順にソートして上位3名から抽選
-    pool = sorted(candidates, key=lambda x: x.stats.get('games', 0))[:3]
+    # 疲労が少ない（fatigue_staminaが低い）順にソートして上位から選ぶ
+    pool = sorted(candidates, key=lambda x: x.fatigue_stamina)[:3]
     return random.choice(pool)

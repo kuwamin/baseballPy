@@ -10,9 +10,9 @@ def reset_result(file_path):
     for sheet_name, df in excel_data.items():
         
         if sheet_name.endswith('_p'):   # 投手シートの場合（末尾が _p）
-            # 「登板数」以降の列をリセット対象にする
-            if '登板数' in df.columns:
-                start_idx = df.columns.get_loc('登板数')
+            # 「減少体力」以降の列をリセット対象にする
+            if '減少体力' in df.columns:
+                start_idx = df.columns.get_loc('減少体力')
                 cols_to_reset = df.columns[start_idx:]
                 df[cols_to_reset] = 0
         

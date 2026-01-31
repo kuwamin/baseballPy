@@ -4,7 +4,7 @@ import DecideOrder
 import DecidePitcher
 import GetSeasonStats
 
-def display_season_result_b(file_path, teams):
+def display_season_result_b(file_path, teams, switch):
     print("\n" + "="*20)
     print("  全チーム 最終打撃成績")
     print("="*20)
@@ -13,7 +13,7 @@ def display_season_result_b(file_path, teams):
         print(f"\n--- {team_name} ベストオーダー ---")
         _, batters = AquireData.Aquire_data(file_path, team_name)
         
-        starters_list = DecideBatter.decide_batter(batters)
+        starters_list = DecideBatter.decide_batter(batters, switch)
         starters_batter = DecideOrder.decide_order(starters_list)
         
         # チーム合計算出用

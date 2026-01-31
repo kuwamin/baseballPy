@@ -28,8 +28,8 @@ class Pitcher(Player):
         self.recovery = data_dict.get('回復')
 
         # --- 疲労 ---
-        self.fatigue_stamina = data_dict.get('減少体力', 0) or 0
-        self.accumulated_fatigue = data_dict.get('蓄積疲労', 0) or 0
+        self.fatigue_stamina = data_dict.get('減少体力', 0)
+        self.accumulated_fatigue = data_dict.get('蓄積疲労', 0)
 
         # --- 成績 ---
         self.stats = {
@@ -82,6 +82,9 @@ class Batter(Player):
         self.throwing_res = data_dict.get('送球')
         self.recovery = data_dict.get('回復')
         self.eye = data_dict.get('選球眼')
+
+        # --- 疲労 ---
+        self.accumulated_fatigue = data_dict.get('蓄積疲労', 0)
 
         # --- 成績スタッツ (エクセルからの読み込みに対応) ---
         self.stats = {

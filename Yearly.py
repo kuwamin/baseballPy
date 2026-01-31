@@ -23,7 +23,8 @@ def main():
         Game.game(file_path, game_number, teams, total_games_team)
 
     # 事後処理
-    DisplaySeasonResult.display_season_result_b(file_path, teams)   # スタメンの最終打撃成績を表示
+    switch = 0  # 疲労による能力ダウンを考慮しない（ベストオーダーを出力）
+    DisplaySeasonResult.display_season_result_b(file_path, teams, switch)   # スタメンの最終打撃成績を表示
     DisplaySeasonResult.display_season_result_p(file_path, teams)   # 先発投手全員の結果を表示
     SummaryResult.test()
 

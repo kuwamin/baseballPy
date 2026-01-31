@@ -17,9 +17,9 @@ def reset_result(file_path):
                 df[cols_to_reset] = 0
         
         elif sheet_name.endswith('_b'): # 野手シートの場合（末尾が _b）
-            # 「試合数」以降の列をリセット対象にする
-            if '試合数' in df.columns:
-                start_idx = df.columns.get_loc('試合数')
+            # 「蓄積疲労」以降の列をリセット対象にする
+            if '蓄積疲労' in df.columns:
+                start_idx = df.columns.get_loc('蓄積疲労')
                 cols_to_reset = df.columns[start_idx:]
                 df[cols_to_reset] = 0
         

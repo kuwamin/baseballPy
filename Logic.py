@@ -11,16 +11,16 @@ def logic(pitcher, batter, game_condition, is_risp):
     """
 
     # （投手）特殊能力による能力変動
-    speed_corr_SA, control_corr_SA, breaking_ball_corr_SA = SpecialAbility.special_ability_p(pitcher, batter, is_risp)
+    speed_p_corr_SA, control_corr_SA, breaking_ball_corr_SA = SpecialAbility.special_ability_p(pitcher, batter, is_risp)
 
-    # 蓄積疲労による能力変動
-    k = pitcher.accumulated_fatigue / 100.0
-    speed_corr_fatigue = -4 * k
-    control_corr_fatigue = -10 * k
-    breaking_ball_fatigue = -2 * k
+    # 投手の蓄積疲労による能力変動
+    k_p = pitcher.accumulated_fatigue / 100.0
+    speed_P_corr_fatigue = -4 * k_p
+    control_corr_fatigue = -10 * k_p
+    breaking_ball_fatigue = -3 * k_p
 
      # 最終的な投手能力決定
-    speed_p = pitcher.speed + speed_corr_SA + speed_corr_fatigue
+    speed_p = pitcher.speed + speed_p_corr_SA + speed_P_corr_fatigue
     control = pitcher.control + control_corr_SA + control_corr_fatigue
     breaking_ball = pitcher.breaking_ball + breaking_ball_corr_SA + breaking_ball_fatigue
 
@@ -31,12 +31,18 @@ def logic(pitcher, batter, game_condition, is_risp):
     # 投手能力による変動
     meet_corr_p, power_corr_p = PitcherAbility.pitcher_ability(speed_p, control, breaking_ball)
 
+    # 野手の蓄積疲労による能力変動
+    k_b = batter.accumulated_fatigue / 100.0
+    meet_corr_fatigue = -5 * k_b
+    power_corr_fatigue = -5 * k_b
+    speed_b_fatigue = -5 * k_b
+
     # 能力変動を受けて最終的な能力値決定
     # 野手能力
     trajectory = batter.trajectory
-    meet = batter.meet + meet_corr_p + meet_corr_SA
-    power = batter.power + power_corr_p + power_corr_SA
-    speed_b = batter.speed
+    meet = batter.meet + meet_corr_p + meet_corr_SA + meet_corr_fatigue
+    power = batter.power + power_corr_p + power_corr_SA + power_corr_fatigue
+    speed_b = batter.speed + speed_b_fatigue
     eye = batter.eye
 
     # 打席結果決定

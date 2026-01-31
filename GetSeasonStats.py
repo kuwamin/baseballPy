@@ -3,6 +3,7 @@ def get_batter_stats(player):
     打率、本塁打、打点、出塁率、OPSを計算して文字列で返す
     """
     # 累積データの取得
+    games = player.stats.get('games', 0)
     hits = player.stats.get('hits', 0)
     ab = player.stats.get('ab', 0)
     hr = player.stats.get('hr', 0)
@@ -39,7 +40,7 @@ def get_batter_stats(player):
     # 4. OPS
     ops = obp + slg
 
-    return f"{avg:.3f} {hr}本 {rbi}打点 OBP{obp:.3f} OPS{ops:.3f}"
+    return f"{games}試合 {avg:.3f} {hr}本 {rbi}打点 OBP{obp:.3f} OPS{ops:.3f}"
 
 
 def get_pitcher_stats(pitcher):

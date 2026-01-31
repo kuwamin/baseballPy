@@ -13,15 +13,15 @@ def pitcher_ability(pitcher, batter, is_risp):
     power_corr = 0
 
     # 球速による補正
-    meet_corr += (pitcher.speed - speed_avg) * (-6)/8
-    power_corr += (pitcher.speed - speed_avg) * (-3)/8
+    meet_corr += (pitcher.speed - speed_avg) * (-9)/8
+    power_corr += (pitcher.speed - speed_avg) * (-6)/8
 
     # コントロールによる補正
     meet_corr += (pitcher.control - control_avg) * (-0)/30
-    power_corr += (pitcher.control - control_avg) * (-9)/30
+    power_corr += (pitcher.control - control_avg) * (-6)/30
 
     # 変化球による補正
-    meet_corr += (pitcher.breaking_ball - breaking_ball_avg) * (-6)/3
-    power_corr += (pitcher.breaking_ball - breaking_ball_avg) * (-3)/3
+    meet_corr += (pitcher.breaking_ball - breaking_ball_avg) * (-6)/4
+    power_corr += (pitcher.breaking_ball - breaking_ball_avg) * (-3)/4
 
     return meet_corr, power_corr

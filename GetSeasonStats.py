@@ -46,8 +46,11 @@ def get_pitcher_stats(pitcher):
     """
     辞書にある対戦打者数などのデータからアウト数を逆算して防御率を計算する
     """
+    games = pitcher.stats.get('games', 0)
     wins = pitcher.stats.get('wins', 0)
     losses = pitcher.stats.get('losses', 0)
+    saves = pitcher.stats.get('saves', 0)
+    holds = pitcher.stats.get('holds', 0)
     er = pitcher.stats.get('自責点', 0)
     
     # 辞書の中にあるデータからアウト数を逆算
@@ -66,4 +69,4 @@ def get_pitcher_stats(pitcher):
     else:
         era = 0.00
 
-    return f"防御率 {era:.2f} {wins}勝 {losses}敗"
+    return f"{games}登板 {(total_outs / 3)}回 {era:.2f} {wins}勝 {losses}敗 {saves}S {holds}H"

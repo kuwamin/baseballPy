@@ -65,9 +65,8 @@ def display_season_result_p(file_path, teams):
             # この投手のアウト数を算出
             p_outs = bf - (h + bb + hbp)
             
-            if p.role == "先":
-                stats_str = GetSeasonStats.get_pitcher_stats(p)
-                print(f"(先発) {p.name} [{stats_str}] {p.speed}km {p.control} {p.stamina} {p.breaking_ball}")
+            stats_str = GetSeasonStats.get_pitcher_stats(p)
+            print(f"{p.role} {p.name} [{stats_str}] {p.speed}km {p.control} {p.stamina} {p.breaking_ball}")
             
             # チーム合計に加算
             t_outs += p_outs

@@ -1,8 +1,11 @@
 from openpyxl import load_workbook
 from Player import Batter, Pitcher
 
-# テストコード
+
 def Aquire_data(file_path, team_name):
+    """
+    エクセルから選手の情報を取得し、投手・野手のインスタンス（の配列）生成
+    """
     
     wb = load_workbook(file_path, data_only=True)
     

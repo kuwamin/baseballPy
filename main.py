@@ -1,8 +1,8 @@
 # ライブラリインポート
-import DisplaySeasonResult
-import Game
-import ResetResult
-import SummaryResult
+import display_season_result
+import game
+import reset_result
+
 
 def main():
     """
@@ -10,23 +10,28 @@ def main():
     """
 
     # 変数
-    total_games_team = 70   #ホームゲームの試合数
-    total_games = total_games_team * 6
-    file_path = 'test.xlsx'
-    teams = ['Hawks', 'Fighters', 'Buffaloes', 'Eagles', 'Lions', 'Marines']
+    file_path = "test.xlsx"
+    teams = ["Hawks", "Fighters", "Buffaloes", "Eagles", "Lions", "Marines"]
+    total_games_team = 7  # ホームゲームの試合数
+    total_games = total_games_team * len(teams)
 
     # 事前処理
-    ResetResult.reset_result(file_path)
+    reset_result.reset_result(file_path)
 
     # 年単位（143試合）実行
-    for game_number in range(1, total_games+1):
-        Game.game(file_path, game_number, teams, total_games_team)
+    for game_number in range(1, total_games + 1):
+        game.game(file_path, game_number, teams, total_games_team)
 
     # 事後処理
-    switch = 0  # ベストオーダーを出力（疲労による能力ダウンを考慮しない）
-    DisplaySeasonResult.display_season_result_b(file_path, teams, switch)   # スタメンの最終打撃成績を表示
-    DisplaySeasonResult.display_season_result_p(file_path, teams)   # 先発投手全員の結果を表示
-    SummaryResult.test()
+    is_fatigue_considered = (
+        False  # ベストオーダーを出力（疲労による能力ダウンを考慮しない）
+    )
+    display_season_result.display_season_result_b(
+        file_path, teams, is_fatigue_considered
+    )  # スタメンの最終打撃成績を表示
+    display_season_result.display_season_result_p(
+        file_path, teams
+    )  # 先発投手全員の結果を表示
 
 
 # 処理実行

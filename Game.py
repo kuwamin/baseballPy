@@ -11,6 +11,7 @@ import DisplayStarter
 import GetSeasonStats
 import OutputExam
 import RunAtBat
+import update_player_fatigue
 
 def game(file_path, game_number, teams, total_games_team):
     """
@@ -21,7 +22,6 @@ def game(file_path, game_number, teams, total_games_team):
     top_bottom = 0       
     batter_number_1 = 1  
     batter_number_2 = 1
-    
     score_1 = [] # 後攻(Team1)の各回の得点
     score_2 = [] # 先行(Team2)の各回の得点
     game_condition = [0,0,0,0,0]
@@ -32,9 +32,9 @@ def game(file_path, game_number, teams, total_games_team):
     pitchers_2, batters_2 = AquireData.Aquire_data(file_path, team_name_2)
 
     # スタメン・先発決定
-    switch = 1  # 疲労による能力ダウンを考慮
-    starters_batter_1 = DecideOrder.decide_order(DecideBatter.decide_batter(batters_1, switch))
-    starters_batter_2 = DecideOrder.decide_order(DecideBatter.decide_batter(batters_2, switch))
+    is_fatigue_considered = True  # 疲労による能力ダウンを考慮
+    starters_batter_1 = DecideOrder.decide_order(DecideBatter.decide_batter(batters_1, is_fatigue_considered))
+    starters_batter_2 = DecideOrder.decide_order(DecideBatter.decide_batter(batters_2, is_fatigue_considered))
     # 先発投手決定
     starters_pitcher_1 = DecidePitcher.decide_pitcher(pitchers_1, game_number)
     starters_pitcher_2 = DecidePitcher.decide_pitcher(pitchers_2, game_number)
@@ -116,7 +116,7 @@ def game(file_path, game_number, teams, total_games_team):
 
     # --- 試合終了後の判定ロジック ---
     total_1, total_2 = sum(score_1), sum(score_2)
-    print(f"試合終了: {total_1} - {total_2}\n")
+    print(f"試合終了: {team_name_1} {total_1} - {total_2} {team_name_2}\n")
 
     # 勝利・敗戦・セーブ・ホールドの決定
     AssignWinLoss.assign_win_loss(pitcher_records_1, pitcher_records_2, total_1, total_2)
@@ -127,60 +127,11 @@ def game(file_path, game_number, teams, total_games_team):
         if outs >= 18 and er <= 3: p.stats['qs'] += 1
         if outs >= 27: p.stats['complete_games'] += 1
 
-    # --- 疲労度更新 ---
-    recovery_map = {'A': 40, 'B': 35, 'C': 30, 'D': 25, 'E': 20, 'F': 15, 'G': 10}
-    pos_fatigue_map = {
-        '捕': 2.0, '遊': 1.7, '二': 1.5, '中': 1.2,
-        '三': 1.1, '右': 1.0, '一': 1.0, '左': 0.8, '指': 0.6
-    }
+    # --- 投手疲労度計算 ---
+    update_player_fatigue.update_player_fatigue_p(pitchers_1, pitcher_records_1, pitchers_2, pitcher_records_2)
 
-    # --- 投手疲労度 ---
-    for team_pitchers in [pitchers_1, pitchers_2]:
-        played_pitchers = [r[0] for r in (pitcher_records_1 if team_pitchers == pitchers_1 else pitcher_records_2)]
-        for p in team_pitchers:
-            # 共通：回復ステータスによる基礎回復値の算出
-            base_recover = recovery_map.get(p.recovery, 15)
-            
-            if p in played_pitchers:
-                # 1. 試合に出た投手
-                pitch_load = p.stats.get('bf', 0) * 4
-                p.fatigue_stamina += pitch_load
-                # 蓄積疲労：負荷から回復値を微量差し引く（回復が高いと溜まりにくい）
-                p.accumulated_fatigue += (pitch_load * 0.2) - (base_recover * 0.01)
-            else:
-                # 試合に出ていない投手
-                # 減少体力の回復
-                p.fatigue_stamina = max(0, p.fatigue_stamina - base_recover)
-                
-                if p.role == "先":
-                    # 2. 試合に出ていない先発
-                    p.accumulated_fatigue -= (base_recover * 0.2)
-                else:
-                    # 3. 試合に出ていない先発以外
-                    p.accumulated_fatigue -= (base_recover * 0.02)
-            
-            # 最終的な下限処理
-            p.accumulated_fatigue = max(0, p.accumulated_fatigue)
-
-    # --- 野手疲労度更新 ---
-    for team_batters, starters in [(batters_1, starters_batter_1), (batters_2, starters_batter_2)]:
-        active_pos_map = {s[1]: s[0] for s in starters}
-        
-        for b in team_batters:
-            base_recover = recovery_map.get(b.recovery, 15)
-            
-            if b in active_pos_map:
-                # 1. 試合に出た野手
-                active_pos = active_pos_map[b]
-                fatigue_weight = pos_fatigue_map.get(active_pos, 1.0)
-                # 加算分から回復分を引く（相殺）
-                b.accumulated_fatigue += fatigue_weight - (base_recover * 0.01)
-            else:
-                # 2. 試合に出なかった野手
-                b.accumulated_fatigue -= (base_recover * 0.05)
-            
-            # 最終的な下限処理
-            b.accumulated_fatigue = max(0, b.accumulated_fatigue)
+    # --- 野手疲労度計算 ---
+    update_player_fatigue.update_player_fatigue_b(batters_1, starters_batter_1, batters_2, starters_batter_2)
 
     # --- 疲労度を反映した保存用リスト作成 ---
     all_active_players = [s[1] for s in starters_batter_1 + starters_batter_2]

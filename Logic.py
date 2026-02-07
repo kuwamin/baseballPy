@@ -17,7 +17,7 @@ def logic(pitcher, batter, game_condition, is_risp):
     k_p = pitcher.accumulated_fatigue / 100.0
     speed_P_corr_fatigue = -3 * k_p
     control_corr_fatigue = -10 * k_p
-    breaking_ball_fatigue = -1 * k_p
+    breaking_ball_fatigue = -1.5 * k_p
 
      # 最終的な投手能力決定
     speed_p = pitcher.speed + speed_p_corr_SA + speed_P_corr_fatigue

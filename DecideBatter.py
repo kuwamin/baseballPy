@@ -1,11 +1,11 @@
-def calculate_score(player, weight, switch):
+def calculate_score(player, weight, is_fatigue_considered):
     """
     選手の蓄積疲労を考慮した実効評価スコアを計算する
     """
     # デバフ係数の計算 (RunAtBatと同様の基準)
     k = player.accumulated_fatigue / 100.0
     
-    if switch == 1:
+    if is_fatigue_considered == 1:
 
         # 疲労による能力低下の計算
         meet_corr = - (10 * k)
@@ -25,7 +25,7 @@ def calculate_score(player, weight, switch):
     return batting_score + fielding_score
 
 
-def decide_batter(batters, switch):
+def decide_batter(batters, is_fatigue_considered):
     """
     攻守の総合力に基づいて各ポジションのレギュラーを選出する
     """
@@ -53,10 +53,10 @@ def decide_batter(batters, switch):
 
         # 一番スコアが高い選手を探す
         best_player = pos_candidates[0]
-        max_score = calculate_score(best_player, weight, switch)
+        max_score = calculate_score(best_player, weight, is_fatigue_considered)
         
         for p in pos_candidates:
-            current_score = calculate_score(p, weight, switch)
+            current_score = calculate_score(p, weight, is_fatigue_considered)
             if current_score > max_score:
                 max_score = current_score
                 best_player = p
@@ -68,10 +68,10 @@ def decide_batter(batters, switch):
     if candidates:
         dh_player = candidates[0]
         # DHは守備関係ないので weight=0 で計算
-        max_dh_score = calculate_score(dh_player, 0, switch)
+        max_dh_score = calculate_score(dh_player, 0, is_fatigue_considered)
         
         for p in candidates:
-            current_dh_score = calculate_score(p, 0, switch)
+            current_dh_score = calculate_score(p, 0, is_fatigue_considered)
             if current_dh_score > max_dh_score:
                 max_dh_score = current_dh_score
                 dh_player = p

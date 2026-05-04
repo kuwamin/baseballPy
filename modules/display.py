@@ -4,6 +4,7 @@ from modules import selectors
 # 別のファイルで作る予定、あるいは既存の成績取得関数
 # もし未作成なら、このファイルの下部に補助関数として定義しても良いです
 from modules import stats
+from modules.models import Batter, Pitcher
 
 
 def display_season_result_b(file_path, teams, is_fatigue_considered):
@@ -112,23 +113,40 @@ def display_season_result_p(file_path, teams):
         print(f"チーム通算防御率: {team_era:.2f}")
 
 
-def display_starter_b(starters_batter, batter_stats_list):
+def display_starter_batter(starters_batters: list[Batter]) -> None:
     """
     試合開始前の本日のスタメン打順を表示
+
+    Args:
+        - starters_batter : 打順組み換え後の Batter のリスト
+
+    Returns:
+        - None
     """
+    batter_stats_list = [
+        stats.get_batter_stats(batter[1]) for batter in starters_batters
+    ]
+
     print("--- 本日のスタメン ---")
     for i, ((game_pos, batter), stats_str) in enumerate(
-        zip(starters_batter, batter_stats_list), 1
+        zip(starters_batters, batter_stats_list), 1
     ):
         print(f"{i}番 ({game_pos}) {batter.name} [{stats_str}]")
 
 
-def display_starter_p(starters_pitcher, pitcher_stats_str):
+def display_starter_pitcher(starters_pitcher: Pitcher) -> None:
     """
     試合開始前の本日の先発投手を表示
+
+    Args:
+        - starters_pitcher : 先発投手の Pitcher インスタンス
+
+    Returns:
+        - None
     """
-    p_role, pitcher = starters_pitcher
+    pitcher_role, pitcher = starters_pitcher
+    pitcher_stats_str = stats.get_pitcher_stats(starters_pitcher[1])
     print(
-        f"({p_role}) {pitcher.name} [{pitcher_stats_str}] {pitcher.speed}km {pitcher.control} {pitcher.stamina} {pitcher.breaking_ball}"
+        f"({pitcher_role}) {pitcher.name} [{pitcher_stats_str}] {pitcher.speed}km {pitcher.control} {pitcher.stamina} {pitcher.breaking_ball}"
     )
     print("\n")

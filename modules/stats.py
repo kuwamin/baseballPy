@@ -1,27 +1,29 @@
-"""
-成績の集計・更新・文字列化を担当するモジュール
-"""
-
-# --- 1. 成績表示用（文字列変換） ---
+from modules.models import Batter, Pitcher
 
 
-def get_batter_stats(player):
+def get_batter_stats(player: Batter) -> str:
     """
     打率、本塁打、打点、出塁率、OPSを計算して文字列で返す
-    """
-    s = player.stats
-    games = s.get("games", 0)
-    hits = s.get("hits", 0)
-    ab = s.get("ab", 0)
-    hr = s.get("hr", 0)
-    rbi = s.get("rbi", 0)
 
-    single = s.get("singles", 0)
-    double = s.get("doubles", 0)
-    triple = s.get("triples", 0)
-    bb = s.get("walks", 0)
-    hbp = s.get("hbp", 0)
-    sf = s.get("sf", 0)
+    Args:
+        - player : Batter のインスタンス
+
+    Returns:
+        - str : 表示する文字列
+    """
+    stats = player.stats
+    games = stats.get("games", 0)
+    hits = stats.get("hits", 0)
+    ab = stats.get("ab", 0)
+    hr = stats.get("hr", 0)
+    rbi = stats.get("rbi", 0)
+
+    single = stats.get("singles", 0)
+    double = stats.get("doubles", 0)
+    triple = stats.get("triples", 0)
+    bb = stats.get("walks", 0)
+    hbp = stats.get("hbp", 0)
+    sf = stats.get("sf", 0)
 
     # 1. 打率 (AVG)
     avg = hits / ab if ab > 0 else 0.0
@@ -40,23 +42,29 @@ def get_batter_stats(player):
     return f"{games}試合 {avg:.3f} {hr}本 {rbi}打点 OBP{obp:.3f} OPS{ops:.3f}"
 
 
-def get_pitcher_stats(pitcher):
+def get_pitcher_stats(pitcher: Pitcher):
     """
-    累積データから防御率などを計算して文字列で返す
+    防御率などを計算して文字列で返す
+
+    Args:
+        - pitcher : Pitcher のインスタンス
+
+    Returns:
+        - str : 表示する文字列
     """
-    s = pitcher.stats
-    games = s.get("games", 0)
-    wins = s.get("wins", 0)
-    losses = s.get("losses", 0)
-    saves = s.get("saves", 0)
-    holds = s.get("holds", 0)
-    er = s.get("自責点", 0)
+    stats = pitcher.stats
+    games = stats.get("games", 0)
+    wins = stats.get("wins", 0)
+    losses = stats.get("losses", 0)
+    saves = stats.get("saves", 0)
+    holds = stats.get("holds", 0)
+    er = stats.get("自責点", 0)
 
     # アウト数の計算 (bf - 被安打 - 与四死球)
-    bf = s.get("bf", 0)
-    h = s.get("hits_allowed", 0)
-    bb = s.get("walks_allowed", 0)
-    hbp = s.get("hbp_allowed", 0)
+    bf = stats.get("bf", 0)
+    h = stats.get("hits_allowed", 0)
+    bb = stats.get("walks_allowed", 0)
+    hbp = stats.get("hbp_allowed", 0)
 
     total_outs = bf - (h + bb + hbp)
 
@@ -77,10 +85,7 @@ def get_pitcher_stats(pitcher):
     )
 
 
-# --- 2. 試合中のリアルタイム更新 ---
-
-
-def judge_risp(game_condition):
+def judge_risp(game_condition: list[int]) -> bool:
     """
     得点圏（2塁または3塁）にランナーがいるか判定
     game_condition: [b1, b2, b3, outs, score]
@@ -88,124 +93,196 @@ def judge_risp(game_condition):
     return game_condition[1] == 1 or game_condition[2] == 1
 
 
-def update_stats_b(pitcher, batter, result, risp, rbi):
-    """判定結果に基づいて野手のstats辞書を更新する"""
-    s = batter.stats
+def update_stats_batter(
+    pitcher: Pitcher, batter: Batter, result: str, risp: bool, rbi: int
+) -> None:
+    """
+    判定結果に基づいて野手のstats辞書を更新する
 
-    s["pa"] += 1
-    s["rbi"] += rbi
+    Args:
+        - pitcher : Pitcher のインスタンス
+        - batter : Batter のインスタンス
+        - result : 打席結果
+        - risp : 得点圏 True、非得点圏 False
+        - rbi : 打点
+
+    Returns:
+        - None
+    """
+    stats = batter.stats
+
+    stats["pa"] += 1
+    stats["rbi"] += rbi
 
     # 得点圏打数の判定
     if risp and result not in ["BB", "HBP"]:
-        s["risp_ab"] += 1
+        stats["risp_ab"] += 1
 
     # 結果別の分岐
     if result in ["1B", "2B", "3B", "HR"]:
-        s["hits"] += 1
+        stats["hits"] += 1
         if result == "1B":
-            s["singles"] += 1
+            stats["singles"] += 1
         elif result == "2B":
-            s["doubles"] += 1
+            stats["doubles"] += 1
         elif result == "3B":
-            s["triples"] += 1
+            stats["triples"] += 1
         elif result == "HR":
-            s["hr"] += 1
+            stats["hr"] += 1
 
         if risp:
-            s["risp_hits"] += 1
+            stats["risp_hits"] += 1
 
     elif result == "BB":
-        s["walks"] += 1
+        stats["walks"] += 1
     elif result == "HBP":
-        s["hbp"] += 1
+        stats["hbp"] += 1
     elif result == "SO":
-        s["so"] += 1
+        stats["so"] += 1
 
     # 打数(ab) = 打席(pa) - (四球 + 死球 + 犠飛)
-    # ※sf(犠飛)も辞書にあることを想定
-    s["ab"] = s["pa"] - (s["walks"] + s["hbp"] + s.get("sf", 0))
+    stats["ab"] = stats["pa"] - (stats["walks"] + stats["hbp"] + stats.get("sf", 0))
 
 
-def update_stats_p(pitcher, batter, result, risp, rbi):
-    """判定結果に基づいて投手のstats辞書を更新する"""
-    s = pitcher.stats
+def update_stats_pitcher(
+    pitcher: Pitcher, batter: Batter, result: str, risp: bool, rbi: int
+) -> None:
+    """
+    判定結果に基づいて投手のstats辞書を更新する
 
-    s["bf"] += 1
-    s["失点"] += rbi
-    s["自責点"] += rbi
+    Args:
+        - pitcher : Pitcher のインスタンス
+        - batter : Batter のインスタンス
+        - result : 打席結果
+        - risp : 得点圏 True、非得点圏 False
+        - rbi : 打点
+
+    Returns:
+        - None
+    """
+    stats = pitcher.stats
+
+    stats["bf"] += 1
+    stats["失点"] += rbi
+    stats["自責点"] += rbi
 
     if risp:
-        s["risp_bf"] += 1
+        stats["risp_bf"] += 1
 
     if result in ["1B", "2B", "3B", "HR"]:
-        s["hits_allowed"] += 1
+        stats["hits_allowed"] += 1
         if result == "HR":
-            s["hr_allowed"] += 1
+            stats["hr_allowed"] += 1
         if risp:
-            s["risp_hits_allowed"] += 1
+            stats["risp_hits_allowed"] += 1
 
     elif result == "BB":
-        s["walks_allowed"] += 1
+        stats["walks_allowed"] += 1
     elif result == "HBP":
-        s["hbp_allowed"] += 1
+        stats["hbp_allowed"] += 1
     elif result == "SO":
-        s["strikeouts"] += 1
-        s["outs_pitched"] += 1
+        stats["strikeouts"] += 1
+        stats["outs_pitched"] += 1
     elif result == "OUT":
-        s["outs_pitched"] += 1
+        stats["outs_pitched"] += 1
 
 
-# --- 3. 試合終了時の称号割り当て ---
-
-
-def assign_win_loss(records_1, records_2, score_1, score_2):
+def assign_win_loss(
+    records_1: list[list], records_2: list[list], score_1: int, score_2: int
+) -> None:
     """
-    勝利・敗戦・セーブ・ホールドの割り当て
-    records: [(pitcher_obj, score_own, score_opp), ...] 登板順のリスト
+
+    勝利・敗戦・セーブ・ホールドの割り当て、成績更新処理
+
+    Args:
+        - records_1 : Team1 の登板投手の記録リスト
+        - records_2 : Team2 の登板投手の記録リスト
+        - score_1 : Team1 の得点
+        - score_2 : Team2 の得点
+
+    Returns:
+        - None
     """
     if score_1 == score_2:
         return
 
     is_team1_win = score_1 > score_2
-    win_records = records_1 if is_team1_win else records_2
-    loss_records = records_2 if is_team1_win else records_1
+    win_recs = records_1 if is_team1_win else records_2
+    loss_recs = records_2 if is_team1_win else records_1
+    final_win_score = score_1 if is_team1_win else score_2
+    final_loss_score = score_2 if is_team1_win else score_1
 
-    # 1. 敗戦投手の決定
-    # リードを許した時点の投手を簡易的に敗戦投手とする
-    loser = loss_records[0][0]
-    for p, s_own, s_opp in loss_records:
-        if s_own < s_opp:
+    # 敗戦投手の決定 (責任消滅ロジックを追加)
+    loser = None
+    for i, rec in enumerate(loss_recs):
+        p, s_in, s_opp_in = rec
+        s_out = loss_recs[i + 1][1] if i + 1 < len(loss_recs) else final_loss_score
+        s_opp_out = loss_recs[i + 1][2] if i + 1 < len(loss_recs) else final_win_score
+
+        # もし自分のイニング終了時に「同点以上」なら、これまでの負け責任はリセット
+        if s_out >= s_opp_out:
+            loser = None
+        # もし負けている状態でマウンドを降り、かつ既に loser が決まっていないなら責任を負う
+        elif s_out < s_opp_out and loser is None:
             loser = p
-            break
+
     loser.stats["losses"] += 1
 
-    # 2. 勝利投手の決定
+    # 勝利投手の決定
     winner = None
-    starter, s_start_own, s_start_opp = win_records[0]
+    starter_rec = win_recs[0]
+    starter_p = starter_rec[0]
 
-    # 先発が5回(15アウト)以上投げ、降板時にリードしている場合
-    if starter.stats.get("outs_pitched", 0) >= 15 and s_start_own > s_start_opp:
-        winner = starter
+    # 先発の降板時スコアを取得
+    st_out = win_recs[1][1] if len(win_recs) > 1 else final_win_score
+    st_opp_out = win_recs[1][2] if len(win_recs) > 1 else final_loss_score
+
+    # 先発勝利の条件: 5回(15個のアウト)以上投げ、降板時にリード、そのまま逆転されずに勝利
+    if starter_p.stats.get("outs_pitched", 0) >= 15 and st_out > st_opp_out:
+        winner = starter_p
     else:
-        # 先発に権利がない場合、2番手以降を暫定勝利投手に
-        winner = win_records[1][0] if len(win_records) > 1 else starter
+        # 先発に権利がない場合、勝ち越した瞬間に投げていた投手を勝者とする
+        for i, rec in enumerate(win_recs):
+            p, s_in, s_opp_in = rec
+            s_out = win_recs[i + 1][1] if i + 1 < len(win_recs) else final_win_score
+            s_opp_out = (
+                win_recs[i + 1][2] if i + 1 < len(win_recs) else final_loss_score
+            )
+
+            if s_out > s_opp_out:
+                winner = p
+                break
+
+    # 万が一 winner が特定できない（ずっとリードしていたが先発が5回未満など）場合は2番手
+    if not winner:
+        winner = win_recs[1][0] if len(win_recs) > 1 else starter_p
 
     winner.stats["wins"] += 1
 
-    # 3. セーブ・ホールドの判定
-    if len(win_records) > 1:
-        last_pitcher = win_records[-1][0]
-        for p, s_in_own, s_in_opp in win_records:
+    # セーブ・ホールドの決定
+    if len(win_recs) > 1:
+        last_pitcher = win_recs[-1][0]
+
+        for i, rec in enumerate(win_recs):
+            p, s_in, s_opp_in = rec
             if p == winner:
                 continue
 
-            lead_margin = s_in_own - s_in_opp
-            if lead_margin <= 0:
-                continue
+            # 降板時スコア
+            s_out = win_recs[i + 1][1] if i + 1 < len(win_recs) else final_win_score
+            s_opp_out = (
+                win_recs[i + 1][2] if i + 1 < len(win_recs) else final_loss_score
+            )
 
-            if p == last_pitcher:
-                if lead_margin <= 3:
+            # 条件A: リードした場面で登板したか（3点差以内、あるいはランナー状況によるが簡易的に3点差）
+            lead_at_in = s_in - s_opp_in
+            # 条件B: リードを保って降りたか
+            is_lead_maintained = s_out > s_opp_out
+
+            if is_lead_maintained and 0 < lead_at_in <= 3:
+                if p == last_pitcher:
+                    # 最後の投手がリードを守ればセーブ
                     p.stats["saves"] += 1
-            else:
-                if lead_margin <= 3:
+                else:
+                    # 途中の投手がリードを守ればホールド
                     p.stats["holds"] += 1

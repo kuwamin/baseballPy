@@ -1,27 +1,40 @@
-from modules import database
-from modules import core_game
-from modules import display
+from modules import database, core_game, display
 
 
 def main() -> None:
-    """1年間のペナントレースを実行する"""
+    """
+    1年間のペナントレースを実行する
 
-    file_path = "test.xlsx"
-    teams = ["Hawks", "Fighters", "Buffaloes", "Eagles", "Lions", "Marines"]
-    total_games_team = 4
-    total_games = total_games_team * len(teams)
+    Args:
+        -
 
-    # 1. 成績リセット (database.py)
+    Returns:
+        -
+    """
+
+    file_path: str = "test.xlsx"
+    team_list: list[str] = [
+        "Hawks",
+        "Fighters",
+        "Buffaloes",
+        "Eagles",
+        "Lions",
+        "Marines",
+    ]
+    total_games_team: int = 72
+    total_games: int = total_games_team * len(team_list)
+
+    # 成績リセット
     database.reset_result(file_path)
 
-    # 2. 試合実行 (core_game.py)
+    # 試合実行
     for game_number in range(1, total_games + 1):
-        core_game.game(file_path, game_number, teams, total_games_team)
+        core_game.game(file_path, game_number, team_list, total_games_team)
 
-    # 3. シーズン結果表示 (display.py)
+    # シーズン結果表示
     is_fatigue_considered = False
-    display.display_season_result_b(file_path, teams, is_fatigue_considered)
-    display.display_season_result_p(file_path, teams)
+    display.display_season_result_b(file_path, team_list, is_fatigue_considered)
+    display.display_season_result_p(file_path, team_list)
 
 
 if __name__ == "__main__":

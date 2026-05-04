@@ -1,0 +1,12 @@
+[tool.poetry]
+name = "penant-game"
+version = "0.1.0"
+description = "Baseball simulation game"
+authors = ["Your Name <you@example.com>"]
+readme = "README.md"
+package-mode = false  # これを追加！
+
+[tool.poetry.dependencies]
+python = "^3.9"
+pandas = "^2.0.0"
+openpyxl = "^3.1.0"

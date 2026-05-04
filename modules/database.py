@@ -1,50 +1,61 @@
 import pandas as pd
 from openpyxl import load_workbook
-from modules.models import Batter, Pitcher
-
-# --- データ読み込み関連 ---
+from modules.models import Batter, Pitcher, Player
 
 
-def Aquire_data(file_path, team_name):
+def Aquire_data(file_path: str, team_name: str) -> tuple[list[Pitcher], list[Batter]]:
+    """
+    Excelファイルから指定されたチームの選手データを読み込み、インスタンス化する。
+
+    Args:
+        - file_path : 読み込み対象となるExcelファイルのパス
+        - team_name : 取得対象のチーム名（シート名の接頭辞として使用）
+
+    Returns:
+        - tuple[List[Pitcher], List[Batter]]:
+            - pitchers: 生成されたPitcherクラスのインスタンスリスト
+            - batters: 生成されたBatterクラスのインスタンスリスト
+    """
     wb = load_workbook(file_path, data_only=True)
-    sheet_p = wb[f"{team_name}_p"]
-    sheet_b = wb[f"{team_name}_b"]
+    sheet_pitchers = wb[f"{team_name}_p"]
+    sheet_batters = wb[f"{team_name}_b"]
 
-    headers_p = [cell.value for cell in sheet_p[1]]
-    headers_b = [cell.value for cell in sheet_b[1]]
+    # ヘッダー行の読み込み
+    headers_pitchers = [cell.value for cell in sheet_pitchers[1]]
+    headers_batters = [cell.value for cell in sheet_batters[1]]
 
     pitchers = []
     batters = []
 
-    # 1. 投手データの取得
-    for row_values in sheet_p.iter_rows(min_row=2, values_only=True):
-        if row_values[0] is None:
-            continue
-        data_dict = dict(zip(headers_p, row_values))
-        p = Pitcher(data_dict)
-        # --- 重要：読み込んだ成績を表示用に退避 ---
-        p.cumulative_stats = data_dict.copy()
-        pitchers.append(p)
+    # 投手データの取得
+    for pitcher in sheet_pitchers.iter_rows(min_row=2, values_only=True):
+        data_dict = dict(zip(headers_pitchers, pitcher))
+        pitcher = Pitcher(data_dict)
+        pitchers.append(pitcher)
 
-    # 2. 野手データの取得
-    for row_values in sheet_b.iter_rows(min_row=2, values_only=True):
-        if row_values[0] is None:
-            continue
-        data_dict = dict(zip(headers_b, row_values))
-        b = Batter(data_dict)
-        # --- 重要：読み込んだ成績を表示用に退避 ---
-        b.cumulative_stats = data_dict.copy()
-        batters.append(b)
+    # 野手データの取得
+    for batter in sheet_batters.iter_rows(min_row=2, values_only=True):
+        data_dict = dict(zip(headers_batters, batter))
+        batter = Batter(data_dict)
+        batters.append(batter)
 
     return pitchers, batters
 
 
-# --- データ更新・保存関連 ---
-
-
-def output_exam(file_path, team_name_1, team_name_2, all_players):
+def output_exam(
+    file_path: str, team_name_1: str, team_name_2: str, all_players: list[Player]
+) -> None:
     """
     試合結果（統計データ）をExcelファイルに書き戻す（加算更新）
+
+    Args:
+        - file_path : 読み込み対象となるExcelファイルのパス
+        - team_name_1 : 取得対象のチーム名（シート名の接頭辞として使用）
+        - team_name_2 : 取得対象のチーム名（シート名の接頭辞として使用）
+        - all_players : 全選手のインスタンス
+
+    Returns:
+        - None
     """
     excel_data = pd.read_excel(file_path, sheet_name=None)
 
@@ -136,9 +147,6 @@ def output_exam(file_path, team_name_1, team_name_2, all_players):
             df.to_excel(writer, sheet_name=sheet_name, index=False)
 
 
-# --- 初期化（リセット）関連 ---
-
-
 def reset_columns(df, cols):
     """
     存在する列のみ0リセット
@@ -147,13 +155,19 @@ def reset_columns(df, cols):
     df[cols_to_reset] = 0
 
 
-def reset_result(file_path):
+def reset_result(file_path: str) -> None:
     """
-    Excelの全成績列を0にリセットする
+        Excelの全成績列を0にリセットする
+
+    Args:
+        - file_path : 読み込み対象となるExcelファイルのパス
+
+    Returns:
+        - None
     """
     excel_data = pd.read_excel(file_path, sheet_name=None)
 
-    p_cols = [
+    pitcher_cols = [
         "減少体力",
         "蓄積疲労",
         "登板数",
@@ -178,7 +192,7 @@ def reset_result(file_path):
         "得点圏被打数",
         "得点圏被安打",
     ]
-    b_cols = [
+    batter_cols = [
         "蓄積疲労",
         "試合数",
         "打席",
@@ -201,16 +215,13 @@ def reset_result(file_path):
         "得点圏安打",
     ]
 
-    for sheet_name, df in excel_data.items():
+    for sheet_name, data_frame in excel_data.items():
         if sheet_name.endswith("_p"):
-            reset_columns(df, p_cols)
+            reset_columns(data_frame, pitcher_cols)
         elif sheet_name.endswith("_b"):
-            reset_columns(df, b_cols)
+            reset_columns(data_frame, batter_cols)
 
+    # Excelファイルのそれぞれのシートに一括で書き込む
     with pd.ExcelWriter(file_path, engine="openpyxl") as writer:
         for sheet_name, data in excel_data.items():
             data.to_excel(writer, sheet_name=sheet_name, index=False)
-
-
-def test():
-    print("Database module: OK")

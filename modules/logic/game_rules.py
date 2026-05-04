@@ -1,39 +1,64 @@
 import random
+from modules.const import BREAKING_BALL_AVG, MEET_AVG, SPEED_AVG
 from modules.logic import physics
 
 
-def strikeout_logic(speed_p, breaking_ball, meet):
+def strikeout_logic(speed_p: int, breaking_ball: int, meet: int) -> str:
     """
-    投手と打者の能力に基づき、三振(SO)か凡退(OUT)かを判定する
+        投手と打者の能力に基づき、三振(SO)か凡退(OUT)かを判定する
+
+    Args:
+        - speed_p : 球速
+        - breaking_ball : 変化量
+        - meet : ミート
+
+    Returns:
+        - str : 打席の結果
     """
-    # 計算用平均値
-    meet_avg = 50
-    speed_p_avg = 145
-    breaking_ball_avg = 6
 
     # 三振率の計算
-    so_chance = (
-        10
-        + (speed_p - speed_p_avg) * 1.5
-        + (breaking_ball - breaking_ball_avg) * 2
-        + (meet - meet_avg) * (-0.25)
+    swing_out_chance = (
+        25
+        + (speed_p - SPEED_AVG) * 0.25
+        + (breaking_ball - BREAKING_BALL_AVG)
+        + (meet - MEET_AVG) * (-0.5)
     )
 
-    if random.randrange(100) < so_chance:
+    if random.randrange(100) < swing_out_chance:
         return "SO"
     else:
         return "OUT"
 
 
 def result_logic(
-    trajectory, meet, power, speed_b, eye, speed_p, control, breaking_ball
-):
+    trajectory: int,
+    meet: int,
+    power: int,
+    speed_b: int,
+    eye: str,
+    speed_p: int,
+    control: int,
+    breaking_ball: int,
+) -> str:
     """
-    打撃結果（単打、本塁打、四球など）を確率に基づき判定する
+        打撃結果（単打、本塁打、四球など）を確率に基づき判定する
+
+    Args:
+        - trajectory : 弾道
+        - meet : ミート
+        - power : パワー
+        - speed_b : 走力
+        - eye : 選球眼
+        - speed_p : 球速
+        - control : コントロール
+        - breaking_ball : 変化量
+
+    Returns:
+        - str : 打席の結果
     """
-    # --- 1. 各結果の基本値計算 ---
+    # 各結果の基本値計算
     single_per = (
-        110
+        120
         + (trajectory * -30) // 4
         + (meet * 140 + power * -60 + speed_b * 15) // 50
         - random.randrange(30)
@@ -75,7 +100,7 @@ def result_logic(
         + random.randrange(4)
     )
 
-    # 選球眼のランクを数値に変換（physicsモジュールの関数を使用）
+    # 選球眼のランクを数値に変換
     walk_per_corr = physics.eye_logic(eye)
 
     # 投手・野手能力に応じて確率変動
@@ -89,7 +114,7 @@ def result_logic(
     walk_per = max(0, walk_per)
     HBP_per = max(0, HBP_per)
 
-    # --- 2. 累積確率の計算 ---
+    # 確率の計算
     sP = single_per
     dP = double_per + sP
     tP = triple_per + dP
@@ -97,7 +122,7 @@ def result_logic(
     wP = walk_per + hrP
     hbpP = HBP_per + wP
 
-    # --- 3. 判定実行 ---
+    # 判定実行
     num = random.randrange(1000)
     result = ""
 
@@ -114,15 +139,22 @@ def result_logic(
     elif num <= hbpP:
         result = "HBP"
     else:
-        # 凡退フラグの中から三振かどうかを判定
+        # 凡退の中で三振かどうかを判定
         result = strikeout_logic(speed_p, breaking_ball, meet)
 
     return result
 
 
-def base_advancement_logic(result, game_condition):
+def base_advancement_logic(result: str, game_condition: list[int]) -> list[int]:
     """
-    打撃結果に基づき、ランナーの進塁とスコア、アウトカウントを更新する
+        打撃結果に基づき、ランナーの進塁とスコア、アウトカウントを更新する
+
+    Args:
+        - result : 打席結果
+        - game_condition : 試合状況のリスト
+
+    Returns:
+        - list[int] : 更新された試合状況のリスト
     """
     # game_condition: [b1, b2, b3, outs, score]
     b1, b2, b3 = game_condition[0], game_condition[1], game_condition[2]

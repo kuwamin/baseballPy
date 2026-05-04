@@ -1,0 +1,8 @@
+# 平均値
+# 投手
+SPEED_AVG = 147
+CONTROL_AVG = 50
+BREAKING_BALL_AVG = 6
+
+# 野手
+MEET_AVG = 50

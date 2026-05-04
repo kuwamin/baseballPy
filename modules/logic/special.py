@@ -1,8 +1,4 @@
-"""
-特殊能力による能力補正、および疲労度の蓄積・回復を担当するモジュール
-"""
-
-# --- 1. 補正値マッピングの定義 ---
+from modules.models import Batter, Pitcher
 
 # 野手用ランク補正 (ランク: (ミート補正, パワー補正))
 BATTER_RANK_MAP = {
@@ -15,19 +11,30 @@ BATTER_RANK_MAP = {
     "G": (-15, -10),
 }
 
-# 投手用ランク補正 (ランク: (球速, 制球, 変化球))
-PITCHER_RANK_MAP = {
-    "A": (2, 4, 4),
-    "B": (1, 2, 2),
-    "C": (1, 1, 0),
+# 対ピンチ補正 (ランク: (球速, 制球, 変化球))
+PITCHER_RISP_MAP = {
+    "A": (2, 0, 4),
+    "B": (1, 0, 2),
+    "C": (1, 0, 0),
     "D": (0, 0, 0),
-    "E": (-1, -1, 0),
-    "F": (-1, -2, -2),
-    "G": (-2, -4, -4),
+    "E": (-1, 0, 0),
+    "F": (-1, 0, -2),
+    "G": (-2, 0, -4),
+}
+
+# 対左打者補正 (ランク: (球速, 制球, 変化球))
+PITCHER_LEFT_MAP = {
+    "A": (6, 12, 0),
+    "B": (4, 10, 0),
+    "C": (2, 4, 0),
+    "D": (0, 0, 0),
+    "E": (-2, 4, 0),
+    "F": (-4, -10, -2),
+    "G": (-6, -12, -4),
 }
 
 # ノビ(fastball_life)補正
-NOBI_MAP = {"A": 8, "B": 4, "C": 2, "D": 0, "E": -2, "F": -4, "G": -8}
+PITCHER_NOBI_MAP = {"A": 8, "B": 4, "C": 2, "D": 0, "E": -2, "F": -4, "G": -8}
 
 # 回復・疲労用定数
 RECOVERY_MAP = {"A": 40, "B": 35, "C": 30, "D": 25, "E": 20, "F": 15, "G": 10}
@@ -44,17 +51,26 @@ POS_FATIGUE_MAP = {
 }
 
 
-# --- 2. 特殊能力補正ロジック ---
-
-
-def special_ability_b(pitcher, batter, is_risp):
+def special_ability_batter(
+    pitcher: Pitcher, batter: Batter, is_risp: bool
+) -> tuple[int, int]:
     """
-    打者の特殊能力（チャンス、対左）による能力補正値を計算する
+        打者の特殊能力（チャンス、対左）による能力補正値を計算する
+
+    Args:
+        - pitcher : Pitcher インスタンス
+        - batter : Batter インスタンス
+        - is_risp : 得点圏 True、非得点圏 False
+
+    Returns:
+        - tuple[int, int]: 以下の順に格納された補正値のタプル
+            - meet_corr : ミート補正
+            - power_corr : パワー補正
     """
     meet_corr = 0
     power_corr = 0
 
-    # 得点圏（チャンス）チェック
+    # 得点圏チェック
     if is_risp:
         m, p = BATTER_RANK_MAP.get(batter.clutch_b, (0, 0))
         meet_corr += m
@@ -69,59 +85,65 @@ def special_ability_b(pitcher, batter, is_risp):
     return meet_corr, power_corr
 
 
-def special_ability_p(pitcher, batter, is_risp):
+def special_ability_pitcher(
+    pitcher: Pitcher, batter: Batter, is_risp: bool
+) -> tuple[int, int, int]:
     """
-    投手の特殊能力（ピンチ、対左、ノビ）による能力補正値を計算する
+        投手の特殊能力（ピンチ、対左、ノビ）による能力補正値を計算する
+
+    Args:
+        - pitcher : Pitcher インスタンス
+        - batter : Batter インスタンス
+        - is_risp : 得点圏 True、非得点圏 False
+
+    Returns:
+        - tuple[int, int, int]: 以下の順に格納された補正値のタプル
+            - speed_corr (int): 球速補正
+            - control_corr (int): コントロール補正
+            - breaking_ball_corr (int): 変化球変化量補正
     """
     speed_corr = 0
     control_corr = 0
     breaking_ball_corr = 0
 
-    # 得点圏（ピンチ）チェック
+    # 得点圏チェック
     if is_risp:
-        s, c, b = PITCHER_RANK_MAP.get(pitcher.clutch_p, (0, 0, 0))
+        s, c, b = PITCHER_RISP_MAP.get(pitcher.clutch_p)
         speed_corr += s
-        # control_corr += c # 元ロジックに合わせて微調整可
+        control_corr += c
         breaking_ball_corr += b
 
     # 対左打者チェック
     if batter.batting == "左":
-        # 対左ランク補正（投手専用）
-        # 元コードは個別の値だったので、ここではマッピングから取得
-        # ※必要に応じてPITCHER_RANK_MAPとは別の専用MAPを作ってもOK
-        if pitcher.vs_left_p == "A":
-            speed_corr += 3
-            control_corr += 6
-        elif pitcher.vs_left_p == "B":
-            speed_corr += 2
-            control_corr += 5
-        elif pitcher.vs_left_p == "C":
-            speed_corr += 1
-            control_corr += 2
-        elif pitcher.vs_left_p == "E":
-            speed_corr -= 1
-            control_corr -= 2
-        elif pitcher.vs_left_p == "F":
-            speed_corr -= 2
-            control_corr -= 5
-        elif pitcher.vs_left_p == "G":
-            speed_corr -= 3
-            control_corr -= 6
+        s, c, b = PITCHER_LEFT_MAP.get(pitcher.clutch_p)
+        speed_corr += s
+        control_corr += c
+        breaking_ball_corr += b
 
     # ノビチェック
-    speed_corr += NOBI_MAP.get(pitcher.fastball_life, 0)
+    speed_corr += PITCHER_NOBI_MAP.get(pitcher.fastball_life)
 
     return speed_corr, control_corr, breaking_ball_corr
 
 
-# --- 3. 疲労度更新ロジック ---
-
-
-def update_player_fatigue_p(
-    pitchers_1, pitcher_records_1, pitchers_2, pitcher_records_2
-):
+def update_player_fatigue_pitcher(
+    pitchers_1: list[Pitcher],
+    pitcher_records_1: list[list],
+    pitchers_2: list[Pitcher],
+    pitcher_records_2: list[list],
+) -> None:
     """
+
     試合終了後の投手疲労度（スタミナ減少・蓄積疲労）を更新する
+
+    Args:
+        - pitchers_1 : Team1 の Pitcher インスタンスリスト
+        - pitcher_records_1 : Team1 の登板投手の記録リスト
+        - pitchers_2 : Team2 の Pitcher インスタンスリスト
+        - pitcher_records_2 : Team2 の登板投手の記録リスト
+
+    Returns:
+        - None
     """
     for team_pitchers, records in [
         (pitchers_1, pitcher_records_1),
@@ -148,9 +170,24 @@ def update_player_fatigue_p(
             p.accumulated_fatigue = max(0, p.accumulated_fatigue)
 
 
-def update_player_fatigue_b(batters_1, starters_batter_1, batters_2, starters_batter_2):
+def update_player_fatigue_batter(
+    batters_1: list[Batter],
+    starters_batter_1: list[Batter],
+    batters_2: list[Batter],
+    starters_batter_2: list[Batter],
+) -> None:
     """
+
     試合終了後の野手疲労度（蓄積疲労）を更新する
+
+    Args:
+        - batters_1 : Team1 の Batter インスタンスリスト
+        - starters_batter_1 : Team1 の スタメンの Batter インスタンスリスト
+        - batters_2 : Team2 の Batter インスタンスリスト
+        - starters_batter_2 : Team2 の スタメンの Batter インスタンスリスト
+
+    Returns:
+        - None
     """
     for team_batters, starters in [
         (batters_1, starters_batter_1),

@@ -7,47 +7,54 @@ from modules import stats
 from modules.models import Batter, Pitcher
 
 
-def display_season_result_b(file_path, teams, is_fatigue_considered):
+def display_season_result_batter(file_path: str, team_list: list[str]) -> None:
     """
     全チームの最終打撃成績とベストオーダーを表示する
+
+    Args:
+        - file_path : 読み込み対象となるExcelファイルのパス
+        - team_list : チームのリスト
+
+    Returns:
+        - None
     """
     print("\n" + "=" * 20)
     print("  全チーム 最終打撃成績")
     print("=" * 20)
 
-    for team_name in teams:
+    for team_name in team_list:
         print(f"\n--- {team_name} ベストオーダー ---")
-        # 1. データ取得 (databaseモジュールを使用)
+        # データ取得
         _, batters = database.Aquire_data(file_path, team_name)
 
-        # 2. スタメンと打順を決定 (selectorsモジュールを使用)
-        starters_list = selectors.decide_batter(batters, is_fatigue_considered)
+        # スタメンと打順を決定
+        starters_list = selectors.decide_batter(batters, False)
         starters_batter = selectors.decide_order(starters_list)
 
-        starter_players = {p for pos, p in starters_batter}
+        starter_players = {player for _, player in starters_batter}
 
         # チーム合計集計用
         t_ab, t_h, t_w, t_hbp, t_sf, t_tb = 0, 0, 0, 0, 0, 0
 
-        # 3. スタメン9人の表示
+        # スタメン9人の表示
         for i, (pos, player) in enumerate(starters_batter, 1):
             stats_str = stats.get_batter_stats(player)
             print(f"{i}番 ({pos}) {player.name} [{stats_str}]")
 
-            s = player.stats
-            t_ab += s.get("ab", 0)
-            t_h += s.get("hits", 0)
-            t_w += s.get("walks", 0)
-            t_hbp += s.get("hbp", 0)
-            t_sf += s.get("sac_fly", 0)
+            stats = player.stats
+            t_ab += stats.get("ab", 0)
+            t_h += stats.get("hits", 0)
+            t_w += stats.get("walks", 0)
+            t_hbp += stats.get("hbp", 0)
+            t_sf += stats.get("sac_fly", 0)
             t_tb += (
-                s.get("singles", 0)
-                + s.get("doubles", 0) * 2
-                + s.get("triples", 0) * 3
-                + s.get("hr", 0) * 4
+                stats.get("singles", 0)
+                + stats.get("doubles", 0) * 2
+                + stats.get("triples", 0) * 3
+                + stats.get("hr", 0) * 4
             )
 
-        # 4. 控え選手の表示
+        # 控え選手の表示
         print(f"\n[{team_name} 控え選手]")
         for player in batters:
             if player not in starter_players:
@@ -67,7 +74,7 @@ def display_season_result_b(file_path, teams, is_fatigue_considered):
                     + s.get("hr", 0) * 4
                 )
 
-        # 5. チームスタッツ算出
+        # チームスタッツ算出
         team_avg = t_h / t_ab if t_ab > 0 else 0
         denom_obp = t_ab + t_w + t_hbp + t_sf
         team_obp = (t_h + t_w + t_hbp) / denom_obp if denom_obp > 0 else 0
@@ -79,15 +86,22 @@ def display_season_result_b(file_path, teams, is_fatigue_considered):
         )
 
 
-def display_season_result_p(file_path, teams):
+def display_season_result_pitcher(file_path: str, team_list: list[str]) -> None:
     """
     全チームの最終投手成績を表示する
+
+    Args:
+        - file_path : 読み込み対象となるExcelファイルのパス
+        - team_list : チームのリスト
+
+    Returns:
+        - None
     """
     print("\n" + "=" * 20)
     print("  全チーム 全投手成績")
     print("=" * 20)
 
-    for team_name in teams:
+    for team_name in team_list:
         print(f"\n[{team_name}]")
         pitchers, _ = database.Aquire_data(file_path, team_name)
 

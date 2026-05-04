@@ -21,7 +21,7 @@ def main() -> None:
         "Lions",
         "Marines",
     ]
-    total_games_team: int = 72
+    total_games_team: int = 2
     total_games: int = total_games_team * len(team_list)
 
     # 成績リセット
@@ -32,9 +32,8 @@ def main() -> None:
         core_game.game(file_path, game_number, team_list, total_games_team)
 
     # シーズン結果表示
-    is_fatigue_considered = False
-    display.display_season_result_b(file_path, team_list, is_fatigue_considered)
-    display.display_season_result_p(file_path, team_list)
+    display.display_season_result_batter(file_path, team_list)
+    display.display_season_result_pitcher(file_path, team_list)
 
 
 if __name__ == "__main__":

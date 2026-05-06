@@ -34,24 +34,40 @@ def display_season_result_batter(file_path: str, team_list: list[str]) -> None:
         starter_players = {player for _, player in starters_batter}
 
         # チーム合計集計用
-        t_ab, t_h, t_w, t_hbp, t_sf, t_tb = 0, 0, 0, 0, 0, 0
+        t_ab, t_h, t_db, t_tr, t_hr, t_w, t_hbp, t_sf, t_so, t_tb = (
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+        )
 
         # スタメン9人の表示
         for i, (pos, player) in enumerate(starters_batter, 1):
             stats_str = stats.get_batter_stats(player)
             print(f"{i}番 ({pos}) {player.name} [{stats_str}]")
 
-            stats = player.stats
-            t_ab += stats.get("ab", 0)
-            t_h += stats.get("hits", 0)
-            t_w += stats.get("walks", 0)
-            t_hbp += stats.get("hbp", 0)
-            t_sf += stats.get("sac_fly", 0)
+            s = player.stats
+            t_ab += s.get("ab", 0)
+            t_h += s.get("hits", 0)
+            t_db += s.get("doubles", 0)
+            t_tr += s.get("triples", 0)
+            t_hr += s.get("hr", 0)
+            t_w += s.get("walks", 0)
+            t_hbp += s.get("hbp", 0)
+            t_sf += s.get("sac_fly", 0)
+            t_so += s.get("so", 0)
+
             t_tb += (
-                stats.get("singles", 0)
-                + stats.get("doubles", 0) * 2
-                + stats.get("triples", 0) * 3
-                + stats.get("hr", 0) * 4
+                s.get("singles", 0)
+                + s.get("doubles", 0) * 2
+                + s.get("triples", 0) * 3
+                + s.get("hr", 0) * 4
             )
 
         # 控え選手の表示
@@ -64,9 +80,14 @@ def display_season_result_batter(file_path: str, team_list: list[str]) -> None:
                 s = player.stats
                 t_ab += s.get("ab", 0)
                 t_h += s.get("hits", 0)
+                t_db += s.get("doubles", 0)
+                t_tr += s.get("triples", 0)
+                t_hr += s.get("hr", 0)
                 t_w += s.get("walks", 0)
                 t_hbp += s.get("hbp", 0)
                 t_sf += s.get("sac_fly", 0)
+                t_so += s.get("so", 0)
+
                 t_tb += (
                     s.get("singles", 0)
                     + s.get("doubles", 0) * 2
@@ -84,6 +105,7 @@ def display_season_result_batter(file_path: str, team_list: list[str]) -> None:
         print(
             f"チーム通算打率: {team_avg:.3f}  チーム通算OPS: {team_obp + team_slg:.3f}"
         )
+        print(f"{t_ab}, {t_h}, {t_db}, {t_tr}, {t_hr}, {t_w}, {t_so}")
 
 
 def display_season_result_pitcher(file_path: str, team_list: list[str]) -> None:

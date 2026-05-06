@@ -1,4 +1,4 @@
-from modules.const import BREAKING_BALL_AVG, CONTROL_AVG, SPEED_AVG
+from modules.const import BREAKING_BALL_AVG, CONTROL_AVG, SPEED_PITCHER_AVG
 
 
 def eye_logic(eye: str) -> int:
@@ -50,8 +50,8 @@ def pitcher_ability_correction(speed_p: int, control: int, breaking_ball: int):
     power_corr = 0
 
     # 球速による補正 (1kmの差でミート約-1.125, パワー約-0.75)
-    meet_corr += (speed_p - SPEED_AVG) * (-9) / 8
-    power_corr += (speed_p - SPEED_AVG) * (-6) / 8
+    meet_corr += (speed_p - SPEED_PITCHER_AVG) * (-9) / 8
+    power_corr += (speed_p - SPEED_PITCHER_AVG) * (-6) / 8
 
     # コントロールによる補正 (ミートへの影響は0, パワーのみ影響)
     meet_corr += (control - CONTROL_AVG) * (-0) / 30

@@ -21,7 +21,7 @@ def main() -> None:
         "Lions",
         "Marines",
     ]
-    total_games_team: int = 2
+    total_games_team: int = 72
     total_games: int = total_games_team * len(team_list)
 
     # 成績リセット

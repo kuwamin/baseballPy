@@ -1,3 +1,5 @@
+from operator import itemgetter
+
 from modules import database
 from modules import selectors
 
@@ -105,7 +107,6 @@ def display_season_result_batter(file_path: str, team_list: list[str]) -> None:
         print(
             f"チーム通算打率: {team_avg:.3f}  チーム通算OPS: {team_obp + team_slg:.3f}"
         )
-        print(f"{t_ab}, {t_h}, {t_db}, {t_tr}, {t_hr}, {t_w}, {t_so}")
 
 
 def display_season_result_pitcher(file_path: str, team_list: list[str]) -> None:
@@ -147,6 +148,56 @@ def display_season_result_pitcher(file_path: str, team_list: list[str]) -> None:
 
         team_era = (t_er * 27) / t_outs if t_outs > 0 else 0
         print(f"チーム通算防御率: {team_era:.2f}")
+
+
+def display_team_ranking(file_path: str, team_list: list[str]) -> None:
+    """
+    シーズン終了後のチーム順位を表示
+
+    Args:
+        - file_path : 読み込み対象となるExcelファイルのパス
+        - team_list : チームのリスト
+
+    Returns:
+        - None
+    """
+
+    team_stats = []
+
+    for team_name in team_list:
+        wins = 0
+        losses = 0
+
+        pitchers, _ = database.Aquire_data(file_path, team_name)
+
+        for p in pitchers:
+            s = p.stats
+            wins += s.get("wins", 0)
+            losses += s.get("losses", 0)
+
+        total_games = wins + losses
+        win_rate = wins / total_games
+
+        # チーム情報をリストに追加
+        team_stats.append(
+            {"name": team_name, "wins": wins, "losses": losses, "win_rate": win_rate}
+        )
+
+    # 勝率が高い順にソート
+    ranking = sorted(team_stats, key=itemgetter("win_rate"), reverse=True)
+
+    top_wins = ranking[0]["wins"]
+    top_losses = ranking[0]["losses"]
+
+    for i, team in enumerate(ranking, 1):
+        # ゲーム差の計算：((首位の勝 - 首位の負) - (当該チームの勝 - 当該チームの負)) / 2
+        games_behind = ((top_wins - top_losses) - (team["wins"] - team["losses"])) / 2.0
+        games_behind_str = f"{games_behind:4.1f}" if i != 1 else "---"
+
+        # 整列して表示
+        print(
+            f"{i:>2}位  {team["name"]:<10} {team['wins']:>3}  {team['losses']:>3}  {team['win_rate']:>6.3f}  {games_behind_str:>8}"
+        )
 
 
 def display_starter_batter(starters_batters: list[Batter]) -> None:

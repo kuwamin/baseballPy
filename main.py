@@ -34,6 +34,7 @@ def main() -> None:
     # シーズン結果表示
     display.display_season_result_batter(file_path, team_list)
     display.display_season_result_pitcher(file_path, team_list)
+    display.display_team_ranking(file_path, team_list)
 
 
 if __name__ == "__main__":

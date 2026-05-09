@@ -196,16 +196,16 @@ def update_player_fatigue_batter(
         # スタメンの選手とポジションの対応
         active_pos_map = {s[1]: s[0] for s in starters}  # {player_obj: position_str}
 
-        for b in team_batters:
-            base_recover = RECOVERY_MAP.get(b.recovery, 15)
+        for batter in team_batters:
+            base_recover = RECOVERY_MAP.get(batter.recovery, 15)
 
-            if b in active_pos_map:
+            if batter in active_pos_map:
                 # 試合に出た野手：ポジションごとの負荷
-                pos = active_pos_map[b]
+                pos = active_pos_map[batter]
                 fatigue_weight = POS_FATIGUE_MAP.get(pos, 1.0)
-                b.accumulated_fatigue += fatigue_weight - (base_recover * 0.01)
+                batter.accumulated_fatigue += fatigue_weight - (base_recover * 0.01)
             else:
                 # 試合に出なかった野手：回復
-                b.accumulated_fatigue -= base_recover * 0.05
+                batter.accumulated_fatigue -= base_recover * 0.05
 
-            b.accumulated_fatigue = max(0, b.accumulated_fatigue)
+            batter.accumulated_fatigue = max(0, batter.accumulated_fatigue)

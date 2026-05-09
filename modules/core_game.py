@@ -29,17 +29,41 @@ def logic(
         breaking_special_corr,
     ) = special.special_ability_pitcher(pitcher, batter, is_risp)
 
+    # 投手の調子による補正
+    speed_condition_corr, control_condition_corr, breaking_ball_condition_corr = (
+        physics.pitcher_condition_correction(pitcher.condition)
+    )
+
     # 投手の疲労による補正
+    # TODO:責務を分けるようにリファクタリング
     fatigue_debuff_pitcher = pitcher.accumulated_fatigue / 100.0
-    speed_p = pitcher.speed + speed_special_corr + (-3 * fatigue_debuff_pitcher)
-    control = pitcher.control + control_special_corr + (-10 * fatigue_debuff_pitcher)
+    speed_p = (
+        pitcher.speed
+        + speed_special_corr
+        + speed_condition_corr
+        + (-3 * fatigue_debuff_pitcher)
+    )
+    control = (
+        pitcher.control
+        + control_special_corr
+        + control_condition_corr
+        + (-10 * fatigue_debuff_pitcher)
+    )
     breaking_ball = (
-        pitcher.breaking_ball + breaking_special_corr + (-1.5 * fatigue_debuff_pitcher)
+        pitcher.breaking_ball
+        + breaking_special_corr
+        + breaking_ball_condition_corr
+        + (-1.5 * fatigue_debuff_pitcher)
     )
 
     # 野手の特殊能力による補正
     meet_special_corr, power_special_corr = special.special_ability_batter(
         pitcher, batter, is_risp
+    )
+
+    # 野手の調子による補正
+    meet_condition_corr, power_condition_corr = physics.batter_condition_correction(
+        batter.condition
     )
 
     # 投手の基礎能力による補正
@@ -48,17 +72,20 @@ def logic(
     )
 
     # 野手の疲労による補正
+    # TODO:責務を分けるようにリファクタリング
     fatigue_debuff_batter = batter.accumulated_fatigue / 100.0
     trajectory = batter.trajectory
     meet = (
         batter.meet
         + meet_pitcher_corr
+        + meet_condition_corr
         + meet_special_corr
         + (-5 * fatigue_debuff_batter)
     )
     power = (
         batter.power
         + power_pitcher_corr
+        + power_condition_corr
         + power_special_corr
         + (-5 * fatigue_debuff_batter)
     )
@@ -245,6 +272,12 @@ def game(
     special.update_player_fatigue_batter(
         batters_1, starters_batters_1, batters_2, starters_batters_2
     )
+
+    # 調子更新
+    physics.update_player_condition(pitchers_1)
+    physics.update_player_condition(pitchers_2)
+    physics.update_player_condition(batters_1)
+    physics.update_player_condition(batters_2)
 
     # 保存処理（今日の成績 all_players 分を Excel に加算）
     all_players = list(

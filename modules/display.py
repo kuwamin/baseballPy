@@ -189,6 +189,7 @@ def display_team_ranking(file_path: str, team_list: list[str]) -> None:
     top_wins = ranking[0]["wins"]
     top_losses = ranking[0]["losses"]
 
+    print("\n")
     for i, team in enumerate(ranking, 1):
         # ゲーム差の計算：((首位の勝 - 首位の負) - (当該チームの勝 - 当該チームの負)) / 2
         games_behind = ((top_wins - top_losses) - (team["wins"] - team["losses"])) / 2.0

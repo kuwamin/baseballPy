@@ -110,7 +110,7 @@ def output_exam(
             if not idx_list.empty:
                 idx = idx_list[0]
 
-                # 1. 通常項目の加算
+                # 通常項目の加算
                 for col, key in mapping.items():
                     if col in df.columns and key in player.stats:
                         val = player.stats[key]
@@ -120,7 +120,7 @@ def output_exam(
                             )
                             df.at[idx, col] = current_val + val
 
-                # 2. 蓄積疲労・減少体力の更新（上書き）
+                # 蓄積疲労・減少体力の更新（上書き）
                 df.at[idx, "蓄積疲労"] = player.accumulated_fatigue
                 if not is_batter:
                     df.at[idx, "減少体力"] = player.fatigue_stamina
@@ -140,6 +140,9 @@ def output_exam(
                         df.at[idx, "イニング数"] = (total_outs // 3) + (
                             total_outs % 3 / 10.0
                         )
+
+                # 調子の更新
+                df.at[idx, "調子"] = player.condition
 
     # 保存
     with pd.ExcelWriter(file_path, engine="openpyxl") as writer:

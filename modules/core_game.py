@@ -255,7 +255,7 @@ def game(
 
     stats.assign_win_loss(pitcher_records_1, pitcher_records_2, total_1, total_2)
 
-    # QS/完投判定
+    # QS, 完投, 完封判定
     for rec in [pitcher_records_1[0], pitcher_records_2[0]]:
         p = rec[0]
         outs = p.stats.get("outs_pitched", 0)
@@ -263,6 +263,8 @@ def game(
         if outs >= 18 and er <= 3:
             p.stats["qs"] += 1
         if outs >= 27:
+            if er == 0:
+                p.stats["shutouts"] += 1
             p.stats["complete_games"] += 1
 
     # 疲労度更新
